@@ -269,7 +269,7 @@
     <div class="hotspot" data-agent="szkolenia"  style="left:40%; top:48%; --c:#9b6bff;"><span class="ic"></span>Szkolenia</div>
     <div class="hotspot" data-agent="onboarding" style="left:26%; top:42%; --c:#46d17f;"><span class="ic"></span>Onboarding</div>
     <div class="hotspot" data-agent="kultura"    style="left:52%; top:52%; --c:#ff5d6c;"><span class="ic"></span>Kultura</div>
-    <div class="hotspot" data-agent="compliance" style="left:34%; top:50%; --c:#4aa3ff;"><span class="ic"></span>Security Gate</div>
+    <div class="hotspot" data-agent="compliance" style="left:37%; top:54%; --c:#4aa3ff;"><span class="ic"></span>Security Gate</div>
     <div class="hotspot" data-agent="kadry"      style="left:66%; top:44%; --c:#ffb43e;"><span class="ic"></span>Kadry</div>
   </div>
 
@@ -534,7 +534,7 @@
   // ====== (wyłączone — zastąpione przez moduł PRAWDZIWEGO 3D na dole pliku) ======
   (function agenciZyja(){ return;
     const stage=document.getElementById('stage'); if(!stage) return;
-    const POS={ recruiter:[63,53], onboarding:[26,52], kadry:[66,54], szkolenia:[40,58], kultura:[52,62], compliance:[34,60] };
+    const POS={ recruiter:[63,53], onboarding:[26,52], kadry:[66,54], szkolenia:[40,58], kultura:[52,62], compliance:[37,64] };
     const COL={ recruiter:'#4aa3ff', onboarding:'#46d17f', kadry:'#ffb43e', szkolenia:'#9b6bff', kultura:'#ff5d6c', compliance:'#4aa3ff' };
     const ROZMOWA=[
       {from:'recruiter',  to:'compliance', text:'Nowe CV: 3 — sprawdź zgodność'},
@@ -651,7 +651,7 @@
   import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
   const stage=document.getElementById('stage');
-  const POS={ recruiter:[63,53], onboarding:[26,52], kadry:[66,54], szkolenia:[40,58], kultura:[52,62], compliance:[34,60] };
+  const POS={ recruiter:[63,53], onboarding:[26,52], kadry:[66,54], szkolenia:[40,58], kultura:[52,62], compliance:[37,64] };
   const COLN={ recruiter:0x4aa3ff, onboarding:0x46d17f, kadry:0xffb43e, szkolenia:0x9b6bff, kultura:0xff5d6c, compliance:0x4aa3ff };
   const COLS={ recruiter:'#4aa3ff', onboarding:'#46d17f', kadry:'#ffb43e', szkolenia:'#9b6bff', kultura:'#ff5d6c', compliance:'#4aa3ff' };
   const ROZMOWA=[
@@ -756,7 +756,7 @@
     {id:'szkolenia',  col:0x9b6bff, seat:[40,58], yaw: 0.3, sits:0},   // wolna podłoga przed tablicą (lewa-środek)
     {id:'onboarding', col:0x46d17f, seat:[26,52], yaw:-0.4, sits:0},   // wolna podłoga przy lewym biurku
     {id:'kultura',    col:0xff5d6c, seat:[52,62], yaw: 0.4, sits:0},   // wolna podłoga PRZED kanapą (środek-przód)
-    {id:'compliance', col:0x4aa3ff, seat:[34,60], yaw:-0.3, sits:0},   // wolna podłoga przed bramkami (lewa-dół)
+    {id:'compliance', col:0x4aa3ff, seat:[37,64], yaw:-0.3, sits:0},   // wolna podłoga PRZED bramkami (nie na turnstile)
     {id:'kadry',      col:0xffb43e, seat:[66,54], yaw:-0.3, sits:0},   // wolna podłoga obok sejfu (prawa)
   ];
   const A3D={};
