@@ -1,14 +1,22 @@
-// HR-OS — service worker (offline + szybkie ładowanie po instalacji)
-// v3: strona (HTML) = network-first (zawsze najświeższa gdy online, cache jako
-//     offline fallback). Reszta (obrazy, ikony, biblioteki) = stale-while-revalidate.
-const CACHE='hr-os-v3';
+// HR-OS — service worker
+// v5: strona = network-first (zawsze najświeższa gdy online), reszta = stale-while-revalidate.
+//     PRZY AKTUALIZACJI z starszej wersji: czyścimy stary cache i JEDNORAZOWO przeładowujemy
+//     otwarte karty, żeby użytkownik od razu dostał świeżą wersję (koniec z zaciętym cache).
+const CACHE='hr-os-v5';
 const CORE=['./hr-os.html','./hr-os-cloud.html','./office.jpg','./icon-192.png','./icon-512.png','./manifest.json'];
 
 self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())); });
 
-self.addEventListener('activate',e=>{ e.waitUntil(
-  caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim())
-); });
+self.addEventListener('activate',e=>{ e.waitUntil((async()=>{
+  const keys=await caches.keys();
+  const hadOld=keys.some(k=>k!==CACHE);                       // czy przechodzimy ze starszej wersji?
+  await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+  await self.clients.claim();
+  if(hadOld){                                                 // tylko przy upgrade — nie migamy nowym userom
+    const cs=await self.clients.matchAll({type:'window'});
+    for(const c of cs){ try{ c.navigate(c.url); }catch(_){} } // jednorazowe przeładowanie na świeżą stronę
+  }
+})()); });
 
 self.addEventListener('fetch',e=>{ if(e.request.method!=='GET') return;
   const req=e.request;
