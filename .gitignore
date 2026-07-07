@@ -1,0 +1,7 @@
+# temp / render helpers
+_*.png
+_*.jpg
+.DS_Store
+Thumbs.db
+node_modules/
+.claude/launch.json
