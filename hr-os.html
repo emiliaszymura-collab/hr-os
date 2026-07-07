@@ -674,7 +674,7 @@
     const [x1,y1]=POS[from],[x2,y2]=POS[to]; p.style.left=x1+'%'; p.style.top=y1+'%'; stage.appendChild(p);
     requestAnimationFrame(()=>{ p.style.transition='left 1.4s linear, top 1.4s linear, opacity .4s'; p.style.left=x2+'%'; p.style.top=y2+'%'; });
     setTimeout(()=>p.style.opacity='0',1300); setTimeout(()=>p.remove(),1750); }
-  setInterval(()=>{ if(document.hidden) return; const a=AG[Math.floor(Math.random()*AG.length)];
+  setInterval(()=>{ const a=AG[Math.floor(Math.random()*AG.length)];
     let b=AG[Math.floor(Math.random()*AG.length)]; if(b===a) b=AG[(AG.indexOf(a)+1)%AG.length]; impulsMaly(a,b); },1500);
 
   // ---- Renderer nakładki (przezroczysty, wewnątrz #stage → dziedziczy kadr) ----
@@ -814,7 +814,7 @@
     bDesk.style.borderColor=colorCss; bDesk.textContent=text; bDesk.classList.add('show'); }
   function schowajDymek(){ bDesk.classList.remove('show'); bTrack=null; }
   let di=0, wizyta=false;
-  function wizytaKrok(){ if(wizyta||document.hidden) return;
+  function wizytaKrok(){ if(wizyta) return;
     const m=ROZMOWA[di++%ROZMOWA.length];
     const A=A3D[m.from], B=A3D[m.to];
     if(!A||!B||A.state!=='home'||B.state!=='home') return;
@@ -877,7 +877,8 @@
   // ---- Pętla renderowania ----
   (function loop(){ requestAnimationFrame(loop);
     const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime;
-    if(document.hidden) return;
+    // (nie zatrzymujemy na document.hidden — przeglądarka sama zwalnia karty w tle;
+    //  dzięki temu animacja działa też w panelu podglądu)
     for(const k in A3D) updAgent(A3D[k],dt,t);
     if(bTrack){ bDesk.style.left=bTrack.x+'%'; bDesk.style.top=(bTrack.y-8.5*bTrack.lastS)+'%'; }
     R.render(scena,cam);
