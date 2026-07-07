@@ -794,7 +794,8 @@
     u.armL.rotation.x=-.85*a.sit - swing*.55 + Math.sin(t*1.7+a.faza)*.07*stoi;
     u.armR.rotation.x=-.85*a.sit + swing*.55 - Math.sin(t*1.7+a.faza)*.07*stoi;
     if(a.state!=='walk' && t>a.nextLook){ a.nextLook=t+1.6+Math.random()*2.4;
-      a.lookYaw=(a.state==='home'? a.def.yaw : a.lookYaw)+(Math.random()*.5-.25); }
+      a.lookYaw=(a.state==='home'? a.def.yaw : a.lookYaw)+(Math.random()*.5-.25);
+      if(a.state==='home' && Math.random()<.35) a.nod=t+1.1; }   // czasem kiwnięcie głową „w zamyśleniu"
     a.g.rotation.y=lerpA(a.g.rotation.y,a.lookYaw,1-Math.pow(.03,dt));
     a.g.rotation.z=Math.sin(a.cad)*.085*krok*stoi;       // waddle ±5° tylko w marszu
     if(u.head){ u.head.rotation.x=a.nod>t? Math.sin((a.nod-t)*14)*.11 : 0; }
@@ -833,7 +834,7 @@
       },2800);
     }); },750);
   }
-  setTimeout(wizytaKrok,6000); setInterval(wizytaKrok,10500);
+  setTimeout(wizytaKrok,3000); setInterval(wizytaKrok,8000);   // prawie ciągły ruch — zawsze ktoś idzie/rozmawia (ale jeden na raz)
 
   // ============================================================================
   // TWARZ 3D AGENTA (modal) — duża głowa z minami
