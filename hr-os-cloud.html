@@ -280,7 +280,7 @@ const CFGKEY='hr-os-cloud-cfg';
 const ini=n=>(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const mkol=m=> m>=85?'#46d17f' : m>=70?'#ffb43e' : '#ff5d6c';
 const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let sb=null, jobs=[], cands=[], selJob=null, webhook=localStorage.getItem('hr-os-cloud-webhook')||'';
+let sb=null, jobs=[], cands=[], selJob=null, webhook=localStorage.getItem('hr-os-cloud-webhook')||'https://emiliasz.app.n8n.cloud/webhook/auto-shortlist';
 let tTm; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tTm); tTm=setTimeout(()=>t.classList.remove('show'),2600); }
 const $=id=>document.getElementById(id);
 

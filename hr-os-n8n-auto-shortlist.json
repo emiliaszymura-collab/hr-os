@@ -45,7 +45,7 @@
         "httpMethod": "POST",
         "path": "auto-shortlist",
         "responseMode": "responseNode",
-        "options": {}
+        "options": { "allowedOrigins": "*" }
       },
       "id": "node-webhook",
       "name": "Webhook — Nowe CV",
