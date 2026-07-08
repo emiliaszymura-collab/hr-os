@@ -247,9 +247,10 @@ function seed(){
     ['Jakub Krawiec','Frontend Developer','Rzeszów',61,'Odrzucony','Vue, JS. 2 lata. Inny stack.'],
   ];
   const cands=baza.map(b=>({ id:uid(), jobId, name:b[0], role:b[1], loc:b[2], email:'', match:b[3], stage:b[4], cv:b[5], ai:'', notes:'', consent:true, decidedBy:(b[4]==='Zatrudniony'||b[4]==='Odrzucony')?'człowiek':'—', createdAt:Date.now() }));
-  return { jobs:[job], cands, settings:{ webhook:'' } };
+  return { jobs:[job], cands, settings:{ webhook:'https://emiliasz.app.n8n.cloud/webhook/auto-shortlist' } };
 }
-function load(){ try{ const r=localStorage.getItem(KEY); state=r?JSON.parse(r):seed(); }catch(e){ state=seed(); } if(!state.settings) state.settings={webhook:''}; }
+function load(){ try{ const r=localStorage.getItem(KEY); state=r?JSON.parse(r):seed(); }catch(e){ state=seed(); } if(!state.settings) state.settings={webhook:''};
+  if(!state.settings.webhook) state.settings.webhook='https://emiliasz.app.n8n.cloud/webhook/auto-shortlist'; }
 function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
 
 // ---- Toast ----
