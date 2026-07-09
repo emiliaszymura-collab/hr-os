@@ -529,6 +529,7 @@ $('bulkCvFile').onchange=async e=>{
   for(let i=0;i<added.length;i++){ toast('Oceniam AI '+(i+1)+'/'+added.length+'...');
     if(await scoreCandidate(added[i], job)) ok++;
     render();
+    if(i<added.length-1) await new Promise(r=>setTimeout(r,400));   // odstęp — nie zamęczamy darmowego n8n
   }
   toast('✔ Gotowe: '+added.length+' CV wczytanych, '+ok+' ocenionych — najlepsi na górze');
 };

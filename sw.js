@@ -2,7 +2,7 @@
 // v5: strona = network-first (zawsze najświeższa gdy online), reszta = stale-while-revalidate.
 //     PRZY AKTUALIZACJI z starszej wersji: czyścimy stary cache i JEDNORAZOWO przeładowujemy
 //     otwarte karty, żeby użytkownik od razu dostał świeżą wersję (koniec z zaciętym cache).
-const CACHE='hr-os-v5';
+const CACHE='hr-os-v6';
 const CORE=['./hr-os.html','./hr-os-cloud.html','./office.jpg','./icon-192.png','./icon-512.png','./manifest.json'];
 
 self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())); });
@@ -26,7 +26,7 @@ self.addEventListener('fetch',e=>{ if(e.request.method!=='GET') return;
   if(isDoc){
     // network-first — najświeższa strona; przy braku sieci sięgamy po cache
     e.respondWith(
-      fetch(req).then(res=>{ const cp=res.clone(); if(res.ok) caches.open(CACHE).then(c=>c.put(req,cp)); return res; })
+      fetch(req,{cache:'reload'}).then(res=>{ const cp=res.clone(); if(res.ok) caches.open(CACHE).then(c=>c.put(req,cp)); return res; })
         .catch(()=>caches.match(req).then(r=>r||caches.match('./hr-os.html')))
     );
     return;
