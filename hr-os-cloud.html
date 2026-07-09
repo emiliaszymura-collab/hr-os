@@ -268,6 +268,15 @@
     <div class="actions"><button class="btn" data-close>Anuluj</button><button class="btn primary" id="setSave">Zapisz</button></div>
   </div></div>
 
+  <!-- Modal RANKING / porównanie do rozmowy -->
+  <div class="overlay" id="rankModal"><div class="card" style="max-width:920px; width:94%">
+    <button class="x" data-close>✕</button>
+    <h2 id="rankTitle">Ranking kandydatów</h2>
+    <div class="hint">Posortowani wg dopasowania AI. To rekomendacja — decyzję o zaproszeniu podejmujesz Ty (RODO / AI Act).</div>
+    <div id="rankTableWrap" style="margin-top:14px; overflow:auto; max-height:60vh"></div>
+    <div class="actions"><button class="btn ghost" id="rankPrint">🖨 Drukuj / zapisz PDF</button><button class="btn primary" data-close>Zamknij</button></div>
+  </div></div>
+
   <div id="drawer"></div>
   <div id="toast"></div>
 
@@ -367,9 +376,10 @@ function renderContent(){
   const list=cands.filter(c=>c.job_id===job.id);
   head.innerHTML=`<div><h1>${esc(job.title)}</h1><div class="sub">${esc(job.loc||'—')} · ${esc(job.sen||'')} · ${list.length} kandydatów</div>
     <div class="chips">${(job.skills||[]).map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div></div>
-    <div class="acts"><button class="btn ghost sm" id="editJob">✎ Edytuj</button><button class="btn ghost sm" id="bulkCand">⚡ Wgraj wiele CV</button><button class="btn primary sm" id="addCand">＋ Dodaj kandydata</button></div>`;
+    <div class="acts"><button class="btn ghost sm" id="editJob">✎ Edytuj</button><button class="btn ghost sm" id="rankBtn">📊 Ranking</button><button class="btn ghost sm" id="bulkCand">⚡ Wgraj wiele CV</button><button class="btn primary sm" id="addCand">＋ Dodaj kandydata</button></div>`;
   $('editJob').onclick=()=>openJob(job.id); $('addCand').onclick=()=>openCand(job.id);
   $('bulkCand').onclick=()=>{ candForJobId=job.id; $('bulkCvFile').click(); };
+  $('rankBtn').onclick=()=>openRanking(job.id);
   board.innerHTML='';
   ETAPY.forEach(et=>{ const col=document.createElement('div'); col.className='col'; col.dataset.stage=et.id;
     const inCol=list.filter(c=>c.stage===et.id).sort((a,b)=>(b.match_pct||0)-(a.match_pct||0));
@@ -532,6 +542,40 @@ $('bulkCvFile').onchange=async e=>{
     if(i<added.length-1) await new Promise(r=>setTimeout(r,400));   // odstęp — nie zamęczamy darmowego n8n
   }
   toast('✔ Gotowe: '+added.length+' CV wczytanych, '+ok+' ocenionych — najlepsi na górze');
+};
+
+// ---------- Ranking / porównanie kandydatów (do zaproszenia na rozmowę) ----------
+let rankJobId=null;
+function ocenaTekst(m){ return m==null?'—':(m>=85?'Wysokie':(m>=70?'Do weryfikacji':'Niskie')); }
+function openRanking(jobId){
+  const job=jobs.find(j=>j.id===jobId); if(!job) return; rankJobId=jobId;
+  const list=cands.filter(c=>c.job_id===jobId).sort((a,b)=>(b.match_pct||0)-(a.match_pct||0));
+  $('rankTitle').textContent='Ranking — '+job.title;
+  const zaproszony=c=>['Rozmowa','Oferta','Zatrudniony'].indexOf(c.stage)>=0;
+  const rows=list.map((c,i)=>{ const m=c.match_pct; return `<tr>
+    <td style="text-align:center;color:var(--przygas)">${i+1}</td>
+    <td><b>${esc(c.name)}</b></td>
+    <td style="text-align:center;font-weight:800;color:${mkol(m||0)}">${m!=null?m+'%':'—'}</td>
+    <td>${esc(ocenaTekst(m))}</td>
+    <td style="font-size:12px;color:var(--przygas)">${esc((c.ai||'').slice(0,200))}</td>
+    <td style="text-align:center"><button class="btn ${zaproszony(c)?'ghost':'primary'} sm" data-invite="${c.id}" ${zaproszony(c)?'disabled':''}>${zaproszony(c)?'✔ Zaproszony':'Zaproś na rozmowę'}</button></td>
+  </tr>`; }).join('');
+  $('rankTableWrap').innerHTML=`<style>.ranktbl{width:100%;border-collapse:collapse}.ranktbl th,.ranktbl td{border-bottom:1px solid rgba(140,160,190,.14);padding:9px 10px;vertical-align:top}.ranktbl th{font-size:11.5px;color:var(--przygas);text-align:left;text-transform:uppercase;letter-spacing:.03em}</style>
+    <table class="ranktbl"><thead><tr><th style="text-align:center">#</th><th>Kandydat</th><th style="text-align:center">Dopasowanie</th><th>Ocena</th><th>Podsumowanie AI</th><th style="text-align:center">Akcja</th></tr></thead><tbody>${rows||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--przygas)">Brak kandydatów</td></tr>'}</tbody></table>`;
+  $('rankTableWrap').querySelectorAll('[data-invite]').forEach(b=>b.onclick=async()=>{ await moveStage(b.dataset.invite,'Rozmowa'); openRanking(jobId); });
+  openOverlay('rankModal');
+}
+$('rankPrint').onclick=()=>{
+  const job=jobs.find(j=>j.id===rankJobId); if(!job) return;
+  const list=cands.filter(c=>c.job_id===rankJobId).sort((a,b)=>(b.match_pct||0)-(a.match_pct||0));
+  const rows=list.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.name)}</td><td style="text-align:center;font-weight:bold">${c.match_pct!=null?c.match_pct+'%':'—'}</td><td>${esc(ocenaTekst(c.match_pct))}</td><td>${esc(c.ai||'')}</td></tr>`).join('');
+  const w=window.open('','_blank'); if(!w){ toast('Zezwól na wyskakujące okna, aby wydrukować'); return; }
+  w.document.write(`<html><head><meta charset="utf-8"><title>Ranking — ${esc(job.title)}</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;padding:28px;color:#111}h1{font-size:20px;margin:0 0 4px}.meta{color:#666;font-size:12px;margin-bottom:16px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px 10px;text-align:left;font-size:12.5px;vertical-align:top}th{background:#f2f4f7}</style></head>
+    <body><h1>Ranking kandydatów — ${esc(job.title)}</h1>
+    <div class="meta">${esc(job.loc||'')} · ${new Date().toLocaleDateString('pl-PL')} · Ocena AI, decyzję podejmuje człowiek (RODO art. 22 / AI Act)</div>
+    <table><thead><tr><th>#</th><th>Kandydat</th><th>Dopasowanie</th><th>Ocena</th><th>Podsumowanie AI</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
+  w.document.close(); setTimeout(()=>w.print(),350);
 };
 
 // ---------- Start ----------
