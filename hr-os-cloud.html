@@ -23,13 +23,13 @@
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root{ --bg:#0a1120; --panel:#101a30; --panel2:#16223c; --line:rgba(120,160,220,.16);
-    --tekst:#e7eefb; --przygas:#8ea2c4; --niebieski:#4aa3ff; --zielony:#46d17f; --fiolet:#9b6bff; --bursztyn:#ffb43e; --czerwony:#ff5d6c; }
+    --tekst:#e7eefb; --przygas:#8ea2c4; --niebieski:#93b4f5; --zielony:#8fdcb4; --fiolet:#b7a8f0; --bursztyn:#f3caa0; --czerwony:#f2a1a8; }
   *{ margin:0; padding:0; box-sizing:border-box; }
   html,body{ height:100%; }
   body{ background:radial-gradient(120% 90% at 50% 0%, #0e1830, #070b14); color:var(--tekst);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
   button{ font-family:inherit; cursor:pointer; } .muted{ color:var(--przygas); }
-  .logo{ font-weight:800; font-size:19px; background:linear-gradient(90deg,#bcd6ff,#4aa3ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .logo{ font-weight:800; font-size:19px; background:linear-gradient(90deg,#bcd6ff,#93b4f5); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .btn{ font-size:13px; font-weight:600; color:var(--tekst); background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:8px 13px; }
   .btn:hover{ border-color:rgba(120,160,220,.45); }
   .btn.primary{ background:var(--niebieski); color:#06121f; border-color:transparent; } .btn.primary:hover{ filter:brightness(1.08); }
@@ -127,7 +127,7 @@
   body.light .cand .mv button,body.light .stageBtns button{ color:#152037; }
 
   /* ===== Premium look „AI Visual Design" (gradienty, poświaty, szkło) ===== */
-  :root{ --accent:#5e8bff; --accent2:#7a6cff; --grad:linear-gradient(135deg,#5e8bff 0%,#7a6cff 100%); }
+  :root{ --accent:#6f90ee; --accent2:#8f7fe0; --grad:linear-gradient(135deg,#93b4f5 0%,#b7a8f0 100%); }
 
   /* Tło z poświatami (tryb ciemny) */
   body:not(.light){
@@ -201,7 +201,7 @@
   <div id="gate">
     <!-- Konfiguracja połączenia -->
     <div class="gcard" id="cfgCard">
-      <div class="gmark"><svg width="56" height="56" viewBox="0 0 60 60"><circle cx="30" cy="33" r="20" fill="#eef3fb"/><rect x="16" y="25" width="28" height="16" rx="8" fill="#0b1526"/><circle cx="25" cy="33" r="3" fill="#7ef0ff"/><circle cx="35" cy="33" r="3" fill="#7ef0ff"/><line x1="30" y1="9" x2="30" y2="13" stroke="#c9d6ea" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="7" r="3.4" fill="#4aa3ff"/></svg></div>
+      <div class="gmark"><svg width="56" height="56" viewBox="0 0 60 60"><circle cx="30" cy="33" r="20" fill="#eef3fb"/><rect x="16" y="25" width="28" height="16" rx="8" fill="#0b1526"/><circle cx="25" cy="33" r="3" fill="#7ef0ff"/><circle cx="35" cy="33" r="3" fill="#7ef0ff"/><line x1="30" y1="9" x2="30" y2="13" stroke="#c9d6ea" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="7" r="3.4" fill="#93b4f5"/></svg></div>
       <div class="logo">HR-OS</div>
       <h2>Połącz z chmurą (Supabase)</h2>
       <div class="hint">Jednorazowo. Wklej klucz <b>anon / public</b> z Supabase (Settings → API). URL jest już wpisany — popraw, jeśli inny. Dane zapisują się tylko w tej przeglądarce.</div>
@@ -216,7 +216,7 @@
 
     <!-- Logowanie -->
     <div class="gcard hidden" id="authCard">
-      <div class="gmark"><svg width="56" height="56" viewBox="0 0 60 60"><circle cx="30" cy="33" r="20" fill="#eef3fb"/><rect x="16" y="25" width="28" height="16" rx="8" fill="#0b1526"/><circle cx="25" cy="33" r="3" fill="#7ef0ff"/><circle cx="35" cy="33" r="3" fill="#7ef0ff"/><line x1="30" y1="9" x2="30" y2="13" stroke="#c9d6ea" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="7" r="3.4" fill="#4aa3ff"/></svg></div>
+      <div class="gmark"><svg width="56" height="56" viewBox="0 0 60 60"><circle cx="30" cy="33" r="20" fill="#eef3fb"/><rect x="16" y="25" width="28" height="16" rx="8" fill="#0b1526"/><circle cx="25" cy="33" r="3" fill="#7ef0ff"/><circle cx="35" cy="33" r="3" fill="#7ef0ff"/><line x1="30" y1="9" x2="30" y2="13" stroke="#c9d6ea" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="7" r="3.4" fill="#93b4f5"/></svg></div>
       <div class="logo">HR-OS</div>
       <h2 id="authTitle">Zaloguj się</h2>
       <div class="hint">System rekrutacyjny w chmurze. Zaloguj się lub załóż konto.</div>
@@ -312,7 +312,7 @@
 // ============================================================================
 // HR-OS CLOUD — Supabase + logowanie + ATS
 // ============================================================================
-const ETAPY=[{id:'Nowy',kolor:'#4aa3ff'},{id:'Screening',kolor:'#ffb43e'},{id:'Rozmowa',kolor:'#9b6bff'},{id:'Oferta',kolor:'#5ad1a0'},{id:'Zatrudniony',kolor:'#46d17f'},{id:'Odrzucony',kolor:'#ff5d6c'}];
+const ETAPY=[{id:'Nowy',kolor:'#93b4f5'},{id:'Screening',kolor:'#f3caa0'},{id:'Rozmowa',kolor:'#b7a8f0'},{id:'Oferta',kolor:'#90d6c4'},{id:'Zatrudniony',kolor:'#8fdcb4'},{id:'Odrzucony',kolor:'#f2a1a8'}];
 // Profesjonalne ikony SVG (zamiast emotek)
 const IC={
   shield:'<svg class="i" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
@@ -329,7 +329,7 @@ const IC={
 };
 const CFGKEY='hr-os-cloud-cfg';
 const ini=n=>(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
-const mkol=m=> m>=85?'#46d17f' : m>=70?'#ffb43e' : '#ff5d6c';
+const mkol=m=> m>=85?'#8fdcb4' : m>=70?'#f3caa0' : '#f2a1a8';
 const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let sb=null, jobs=[], cands=[], selJob=null, webhook=localStorage.getItem('hr-os-cloud-webhook')||'https://emiliasz.app.n8n.cloud/webhook/auto-shortlist';
 let tTm; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tTm); tTm=setTimeout(()=>t.classList.remove('show'),2600); }
@@ -429,10 +429,10 @@ function renderContent(){
 }
 // ===== OVERVIEW — widgety analityczne liczone z danych kandydatów =====
 const OVICO={
-  users:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4aa3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
-  target:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b6bff" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></svg>',
-  star:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#46d17f" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.9 6 6.6.9-4.8 4.6 1.1 6.5L12 18.9 6.2 21l1.1-6.5L2.5 9.9 9.1 9z"/></svg>',
-  chat:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffb43e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+  users:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93b4f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
+  target:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b7a8f0" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></svg>',
+  star:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fdcb4" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.9 6 6.6.9-4.8 4.6 1.1 6.5L12 18.9 6.2 21l1.1-6.5L2.5 9.9 9.1 9z"/></svg>',
+  chat:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f3caa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
 };
 function svgSpark(vals,color){
   vals=(vals&&vals.length)?vals:[0,0]; if(vals.length===1) vals=[vals[0],vals[0]];
@@ -448,7 +448,7 @@ function svgGauge(pct){
   const arc=(f,t)=>{const s=a(f),e=a(t);const large=(t-f)>180?1:0;return `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(1)} ${e.y.toFixed(1)}`;};
   const p=Math.max(0,Math.min(100,pct)), vd=start+(end-start)*(p/100);
   const valPath=p>1?`<path d="${arc(start,vd)}" fill="none" stroke="url(#gaugeGrad)" stroke-width="${sw}" stroke-linecap="round"/>`:'';
-  return `<svg viewBox="0 0 128 128" width="120" height="120"><defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5e8bff"/><stop offset="1" stop-color="#7a6cff"/></linearGradient></defs><path d="${arc(start,end)}" fill="none" stroke="rgba(150,170,210,.16)" stroke-width="${sw}" stroke-linecap="round"/>${valPath}</svg>`;
+  return `<svg viewBox="0 0 128 128" width="120" height="120"><defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#93b4f5"/><stop offset="1" stop-color="#b7a8f0"/></linearGradient></defs><path d="${arc(start,end)}" fill="none" stroke="rgba(150,170,210,.16)" stroke-width="${sw}" stroke-linecap="round"/>${valPath}</svg>`;
 }
 function renderOverview(job,list){
   const ov=$('overview'); if(!ov) return; if(!job){ ov.innerHTML=''; return; }
@@ -463,13 +463,13 @@ function renderOverview(job,list){
   const maxS=Math.max.apply(null,[1].concat(perStage.map(s=>s.n)));
   const kpi=(ico,label,val,suf,color,spark)=>`<div class="wid kpi"><div class="kh"><span class="ico">${ico}</span>${label}</div><div class="val" data-count="${val}" data-suffix="${suf||''}">0${suf||''}</div>${spark||''}</div>`;
   ov.innerHTML=`<div class="bento">
-    ${kpi(OVICO.users,'Kandydaci',n,'','#4aa3ff',svgSpark(spk.length?spk:[0,0],'#4aa3ff'))}
-    ${kpi(OVICO.target,'Śr. dopasowanie',avg,'%','#9b6bff',svgSpark(spk,'#9b6bff'))}
-    ${kpi(OVICO.star,'Najlepszy',best,'%','#46d17f',svgSpark(spk,'#46d17f'))}
-    ${kpi(OVICO.chat,'Do rozmowy',invited,'','#ffb43e',svgSpark(perStage.map(s=>s.n),'#ffb43e'))}
+    ${kpi(OVICO.users,'Kandydaci',n,'','#93b4f5',svgSpark(spk.length?spk:[0,0],'#93b4f5'))}
+    ${kpi(OVICO.target,'Śr. dopasowanie',avg,'%','#b7a8f0',svgSpark(spk,'#b7a8f0'))}
+    ${kpi(OVICO.star,'Najlepszy',best,'%','#8fdcb4',svgSpark(spk,'#8fdcb4'))}
+    ${kpi(OVICO.chat,'Do rozmowy',invited,'','#f3caa0',svgSpark(perStage.map(s=>s.n),'#f3caa0'))}
     <div class="wid"><div class="wt">Trafność dopasowania AI</div><div class="ws">rozkład jakości kandydatów</div>
       <div style="position:relative; display:flex; justify-content:center; margin-top:2px">${svgGauge(avg)}<div class="gauge-num" style="position:absolute; top:58%; left:50%; transform:translate(-50%,-50%)">${avg}%</div></div>
-      <div class="legend" style="justify-content:center; margin-top:2px"><span><i style="background:#46d17f"></i>Doskonałe ${exc}</span><span><i style="background:#4aa3ff"></i>Dobre ${good}</span><span><i style="background:#ff5d6c"></i>Słabe ${weak}</span></div>
+      <div class="legend" style="justify-content:center; margin-top:2px"><span><i style="background:#8fdcb4"></i>Doskonałe ${exc}</span><span><i style="background:#93b4f5"></i>Dobre ${good}</span><span><i style="background:#f2a1a8"></i>Słabe ${weak}</span></div>
     </div>
     <div class="wid"><div class="wt">Lejek rekrutacji</div><div class="ws">kandydaci na etapach</div>
       <div class="bars">${perStage.map(s=>`<div class="b"><div class="col2" data-h="${Math.round(s.n/maxS*100)}" style="height:0"></div><div class="lb">${s.n}</div></div>`).join('')}</div>
