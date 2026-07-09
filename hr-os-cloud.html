@@ -195,7 +195,13 @@
       <label class="f">E-mail</label>
       <input id="authEmail" type="email" placeholder="ty@firma.pl" />
       <label class="f">Hasło</label>
-      <input id="authPass" type="password" placeholder="min. 6 znaków" />
+      <div style="position:relative">
+        <input id="authPass" type="password" placeholder="min. 6 znaków" style="padding-right:44px" />
+        <button type="button" id="authPassToggle" aria-label="Pokaż hasło" title="Pokaż / ukryj hasło"
+          style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:0; cursor:pointer; padding:6px; color:var(--przygas,#93a4bf); display:flex; align-items:center;">
+          <svg id="authEyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
       <button class="btn primary full" id="authBtn">Zaloguj</button>
       <div class="err" id="authErr"></div>
       <div class="hint" style="margin-top:12px">
@@ -301,6 +307,11 @@ $('cfgReset').onclick=()=>{ localStorage.removeItem(CFGKEY); location.reload(); 
 
 // ---------- Logowanie ----------
 let signupMode=false;
+// Podgląd hasła (oczko)
+(function(){ const t=$('authPassToggle'), p=$('authPass'), ic=$('authEyeIcon'); if(!t||!p||!ic) return;
+  const eye='<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeOff=eye+'<line x1="3" y1="3" x2="21" y2="21"/>';
+  t.onclick=()=>{ const show=p.type==='password'; p.type=show?'text':'password'; ic.innerHTML=show?eyeOff:eye; t.setAttribute('aria-label', show?'Ukryj hasło':'Pokaż hasło'); }; })();
 $('toSignup')&&($('toSignup').onclick=()=>{ signupMode=!signupMode; $('authTitle').textContent=signupMode?'Załóż konto':'Zaloguj się'; $('authBtn').textContent=signupMode?'Załóż konto':'Zaloguj'; $('toSignup').textContent=signupMode?'Masz już konto? Zaloguj się':'Nie masz konta? Załóż konto'; $('authErr').textContent=''; });
 $('authBtn').onclick=async()=>{
   const email=$('authEmail').value.trim(), pass=$('authPass').value;
