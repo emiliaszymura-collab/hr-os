@@ -166,6 +166,34 @@
   @keyframes viewIn{ from{ opacity:0; transform:translateY(14px) scale(.995); } }
   .gmark{ display:flex; justify-content:center; margin-bottom:6px; }
   @view-transition{ navigation:auto; }
+
+  /* ===== OVERVIEW — bento analityczne (Apple-like, 3D) ===== */
+  #overview{ padding:14px 20px 0; } #overview:empty{ display:none; }
+  .bento{ display:grid; grid-template-columns:repeat(4,1fr) 1.45fr 1.55fr; grid-auto-rows:minmax(148px,auto); gap:14px; }
+  @media(max-width:1240px){ .bento{ grid-template-columns:repeat(2,1fr); } }
+  .wid{ position:relative; border-radius:20px; padding:15px 17px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.09); box-shadow:0 12px 34px rgba(0,0,0,.3); overflow:hidden; opacity:0; transform:translateY(16px);
+    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; }
+  .wid::after{ content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; background:var(--grad);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:.32; pointer-events:none; }
+  .wid:hover{ box-shadow:0 24px 64px rgba(74,163,255,.26); }
+  @keyframes widIn{ to{ opacity:1; transform:translateY(0); } }
+  body.light .wid{ background:#fff; border-color:rgba(20,40,80,.1); box-shadow:0 12px 30px rgba(20,40,80,.09); }
+  .kpi .kh{ display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--przygas); font-weight:600; }
+  .kpi .kh .ico{ width:27px; height:27px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(120,160,220,.14); }
+  .kpi .val{ font-size:29px; font-weight:850; letter-spacing:-.02em; margin-top:10px; line-height:1; position:relative; z-index:2; }
+  .kpi .spark{ position:absolute; left:0; right:0; bottom:0; width:100%; height:42px; }
+  .wid .wt{ font-size:12.5px; font-weight:700; } .wid .ws{ font-size:10.5px; color:var(--przygas); margin-top:1px; }
+  .gauge-num{ font-size:26px; font-weight:850; letter-spacing:-.02em; }
+  .legend{ display:flex; flex-wrap:wrap; gap:5px 12px; margin-top:10px; font-size:10.5px; color:var(--przygas); }
+  .legend i{ width:9px; height:9px; border-radius:3px; display:inline-block; margin-right:5px; }
+  .bars{ display:flex; align-items:flex-end; gap:9px; height:72px; margin-top:12px; }
+  .bars .b{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end; }
+  .bars .b .col2{ width:100%; border-radius:7px 7px 3px 3px; background:var(--grad); min-height:4px; transition:height .9s cubic-bezier(.2,.8,.2,1); }
+  .bars .b .lb{ font-size:11px; font-weight:700; }
+  /* sprężysty modal (Apple) */
+  .overlay .card{ animation:cardIn .42s cubic-bezier(.2,.9,.25,1.08); }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(20px) scale(.955); } }
 </style>
 </head>
 <body class="entering">
@@ -227,7 +255,7 @@
     </header>
     <main>
       <aside id="side"><div class="h"><span class="t">Stanowiska</span></div><div id="jobs"></div></aside>
-      <section id="content"><div id="jobHead"></div><div id="board"></div></section>
+      <section id="content"><div id="jobHead"></div><div id="overview"></div><div id="board"></div></section>
     </main>
   </div>
 
@@ -372,7 +400,7 @@ function renderJobs(){
 }
 function renderContent(){
   const head=$('jobHead'), board=$('board'); const job=jobs.find(j=>j.id===selJob);
-  if(!job){ head.innerHTML=''; board.innerHTML='<div class="empty" style="margin:auto">Wybierz stanowisko albo dodaj nowe.</div>'; return; }
+  if(!job){ head.innerHTML=''; $('overview').innerHTML=''; board.innerHTML='<div class="empty" style="margin:auto">Wybierz stanowisko albo dodaj nowe.</div>'; return; }
   const list=cands.filter(c=>c.job_id===job.id);
   head.innerHTML=`<div><h1>${esc(job.title)}</h1><div class="sub">${esc(job.loc||'—')} · ${esc(job.sen||'')} · ${list.length} kandydatów</div>
     <div class="chips">${(job.skills||[]).map(s=>`<span class="chip">${esc(s)}</span>`).join('')}</div></div>
@@ -390,6 +418,68 @@ function renderContent(){
     col.addEventListener('dragleave',()=>col.classList.remove('drop'));
     col.addEventListener('drop',e=>{ e.preventDefault(); col.classList.remove('drop'); moveStage(e.dataTransfer.getData('id'), et.id); });
     board.appendChild(col); });
+  renderOverview(job, list);
+}
+// ===== OVERVIEW — widgety analityczne liczone z danych kandydatów =====
+const OVICO={
+  users:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4aa3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
+  target:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9b6bff" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6"/></svg>',
+  star:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#46d17f" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.9 6 6.6.9-4.8 4.6 1.1 6.5L12 18.9 6.2 21l1.1-6.5L2.5 9.9 9.1 9z"/></svg>',
+  chat:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffb43e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+};
+function svgSpark(vals,color){
+  vals=(vals&&vals.length)?vals:[0,0]; if(vals.length===1) vals=[vals[0],vals[0]];
+  const w=140,h=42,max=Math.max.apply(null,vals),min=Math.min.apply(null,vals),rng=(max-min)||1;
+  const pts=vals.map((v,i)=>[(i/(vals.length-1))*w, h-5-((v-min)/rng)*(h-12)]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const id='s'+Math.random().toString(36).slice(2,7);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".38"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs><path d="${d} L ${w} ${h} L 0 ${h} Z" fill="url(#${id})"/><path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function svgGauge(pct){
+  const R=52,cx=64,cy=66,sw=13,start=135,end=405;
+  const a=deg=>({x:cx+R*Math.cos(deg*Math.PI/180),y:cy+R*Math.sin(deg*Math.PI/180)});
+  const arc=(f,t)=>{const s=a(f),e=a(t);const large=(t-f)>180?1:0;return `M ${s.x.toFixed(1)} ${s.y.toFixed(1)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(1)} ${e.y.toFixed(1)}`;};
+  const p=Math.max(0,Math.min(100,pct)), vd=start+(end-start)*(p/100);
+  const valPath=p>1?`<path d="${arc(start,vd)}" fill="none" stroke="url(#gaugeGrad)" stroke-width="${sw}" stroke-linecap="round"/>`:'';
+  return `<svg viewBox="0 0 128 128" width="120" height="120"><defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset=".5" stop-color="#4aa3ff"/><stop offset="1" stop-color="#9b6bff"/></linearGradient></defs><path d="${arc(start,end)}" fill="none" stroke="rgba(150,170,210,.16)" stroke-width="${sw}" stroke-linecap="round"/>${valPath}</svg>`;
+}
+function renderOverview(job,list){
+  const ov=$('overview'); if(!ov) return; if(!job){ ov.innerHTML=''; return; }
+  const scored=list.filter(c=>c.match_pct!=null);
+  const n=list.length;
+  const avg=scored.length?Math.round(scored.reduce((s,c)=>s+c.match_pct,0)/scored.length):0;
+  const best=scored.length?Math.max.apply(null,scored.map(c=>c.match_pct)):0;
+  const invited=list.filter(c=>['Rozmowa','Oferta','Zatrudniony'].indexOf(c.stage)>=0).length;
+  const exc=scored.filter(c=>c.match_pct>=85).length, good=scored.filter(c=>c.match_pct>=70&&c.match_pct<85).length, weak=scored.filter(c=>c.match_pct<70).length;
+  const spk=scored.map(c=>c.match_pct).sort((a,b)=>a-b);
+  const perStage=ETAPY.map(e=>({id:e.id,kolor:e.kolor,n:list.filter(c=>c.stage===e.id).length}));
+  const maxS=Math.max.apply(null,[1].concat(perStage.map(s=>s.n)));
+  const kpi=(ico,label,val,suf,color,spark)=>`<div class="wid kpi"><div class="kh"><span class="ico">${ico}</span>${label}</div><div class="val" data-count="${val}" data-suffix="${suf||''}">0${suf||''}</div>${spark||''}</div>`;
+  ov.innerHTML=`<div class="bento">
+    ${kpi(OVICO.users,'Kandydaci',n,'','#4aa3ff',svgSpark(spk.length?spk:[0,0],'#4aa3ff'))}
+    ${kpi(OVICO.target,'Śr. dopasowanie',avg,'%','#9b6bff',svgSpark(spk,'#9b6bff'))}
+    ${kpi(OVICO.star,'Najlepszy',best,'%','#46d17f',svgSpark(spk,'#46d17f'))}
+    ${kpi(OVICO.chat,'Do rozmowy',invited,'','#ffb43e',svgSpark(perStage.map(s=>s.n),'#ffb43e'))}
+    <div class="wid"><div class="wt">Trafność dopasowania AI</div><div class="ws">rozkład jakości kandydatów</div>
+      <div style="position:relative; display:flex; justify-content:center; margin-top:2px">${svgGauge(avg)}<div class="gauge-num" style="position:absolute; top:58%; left:50%; transform:translate(-50%,-50%)">${avg}%</div></div>
+      <div class="legend" style="justify-content:center; margin-top:2px"><span><i style="background:#46d17f"></i>Doskonałe ${exc}</span><span><i style="background:#4aa3ff"></i>Dobre ${good}</span><span><i style="background:#ff5d6c"></i>Słabe ${weak}</span></div>
+    </div>
+    <div class="wid"><div class="wt">Lejek rekrutacji</div><div class="ws">kandydaci na etapach</div>
+      <div class="bars">${perStage.map(s=>`<div class="b"><div class="col2" data-h="${Math.round(s.n/maxS*100)}" style="height:0"></div><div class="lb">${s.n}</div></div>`).join('')}</div>
+      <div class="legend">${perStage.map(s=>`<span><i style="background:${s.kolor}"></i>${esc(s.id)}</span>`).join('')}</div>
+    </div>
+  </div>`;
+  animateOverview(ov);
+}
+function animateOverview(ov){
+  ov.querySelectorAll('.wid').forEach((w,i)=>{ w.style.animationDelay=(i*70)+'ms';
+    w.addEventListener('mousemove',e=>{ const r=w.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+      w.style.transform=`perspective(820px) rotateY(${(x*6).toFixed(2)}deg) rotateX(${(-y*6).toFixed(2)}deg) translateY(-3px)`; });
+    w.addEventListener('mouseleave',()=>{ w.style.transform=''; });
+  });
+  ov.querySelectorAll('[data-count]').forEach(el=>{ const target=parseFloat(el.dataset.count)||0, suf=el.dataset.suffix||''; const t0=performance.now(),dur=900;
+    const step=t=>{ const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3); el.textContent=Math.round(target*e)+suf; if(p<1) requestAnimationFrame(step); }; requestAnimationFrame(step); });
+  requestAnimationFrame(()=>ov.querySelectorAll('.bars .col2').forEach(b=>{ b.style.height=(b.dataset.h||0)+'%'; }));
 }
 function candCard(c){ const m=c.match_pct;
   const d=document.createElement('div'); d.className='cand'; d.draggable=true;
@@ -578,8 +668,17 @@ $('rankPrint').onclick=()=>{
   w.document.close(); setTimeout(()=>w.print(),350);
 };
 
+// ---------- Tryb podglądu / demo (bez logowania): otwórz z #demo ----------
+function showDemo(){
+  jobs=[{id:'demo',title:'Menadżer restauracji',loc:'Katowice',sen:'Mid',skills:['Zarządzanie zespołem','Food cost','Grafiki','HACCP','POS','Obsługa gościa'],descr:'Zarządzanie restauracją i zespołem.'}];
+  selJob='demo';
+  const seed=[['Katarzyna Lewandowska',95,'Screening'],['Magdalena Król',90,'Screening'],['Beata Dąbrowska',88,'Rozmowa'],['Marcin Zieliński',80,'Nowy'],['Rafał Mazur',78,'Nowy'],['Anna Wójcik',65,'Nowy'],['Piotr Kaczmarek',55,'Nowy'],['Krzysztof Jankowski',52,'Screening'],['Tomasz Nowak',40,'Nowy'],['Julia Wiśniewska',18,'Nowy']];
+  cands=seed.map((s,i)=>({id:'d'+i,job_id:'demo',name:s[0],role:'Menadżer restauracji',loc:'',match_pct:s[1],ai:'Ocena AI na podstawie CV i wymagań stanowiska (dopasowanie kompetencji).',stage:s[2],consent:true,decided_by:'—'}));
+  showApp(); $('whoami').textContent='tryb demo'; render();
+}
 // ---------- Start ----------
 (function start(){
+  if(location.hash.indexOf('demo')>=0){ return showDemo(); }
   const cfg=getCfg();
   if(!cfg){ showCfg(); return; }
   $('cfgUrl').value=cfg.url;
