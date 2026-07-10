@@ -55,9 +55,12 @@
   #side{ width:280px; flex:0 0 auto; border-right:1px solid var(--line); display:flex; flex-direction:column; background:rgba(8,13,26,.4); }
   #side .h{ display:flex; align-items:center; gap:8px; padding:14px 16px 8px; } #side .h .t{ font-size:12px; text-transform:uppercase; letter-spacing:.6px; color:var(--przygas); }
   #jobs{ overflow-y:auto; padding:6px 10px 14px; display:flex; flex-direction:column; gap:8px; }
-  .jobCard{ border:1px solid var(--line); border-radius:11px; padding:11px 12px; background:var(--panel); cursor:pointer; transition:.15s; }
-  .jobCard:hover{ border-color:rgba(120,160,220,.4); } .jobCard.active{ border-color:var(--niebieski); box-shadow:0 0 0 1px rgba(74,163,255,.35) inset; background:var(--panel2); }
-  .jobCard .jt{ font-size:14px; font-weight:650; } .jobCard .jm{ font-size:11.5px; color:var(--przygas); margin-top:2px; } .jobCard .jc{ font-size:11px; color:var(--niebieski); margin-top:6px; }
+  .jobCard{ display:flex; align-items:center; gap:11px; border:1px solid transparent; border-radius:12px; padding:9px 11px; background:transparent; cursor:pointer; transition:.15s; }
+  .jobCard:hover{ background:rgba(120,160,220,.08); }
+  .jobCard.active{ background:rgba(111,144,238,.14); border-color:rgba(111,144,238,.28); }
+  .jobCard .mi{ width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(120,160,220,.12); color:var(--przygas); flex:0 0 auto; }
+  .jobCard.active .mi{ background:rgba(111,144,238,.22); color:var(--accent); }
+  .jobCard .jt{ font-size:13.5px; font-weight:600; } .jobCard.active .jt{ color:var(--accent); }
   #content{ flex:1; min-width:0; display:flex; flex-direction:column; }
   #jobHead{ padding:16px 20px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; }
   #jobHead h1{ font-size:20px; font-weight:750; } #jobHead .sub{ font-size:13px; color:var(--przygas); margin-top:3px; }
@@ -125,6 +128,14 @@
   body.light .col .ch .cnt{ background:rgba(20,40,80,.06); }
   body.light #toast{ background:#ffffff; color:#152037; box-shadow:0 10px 30px rgba(20,40,80,.18); }
   body.light .cand .mv button,body.light .stageBtns button{ color:#152037; }
+  body.light #jobHead h1{ background:none; -webkit-text-fill-color:var(--tekst); color:var(--tekst); }
+  body.light .jobCard{ background:transparent; box-shadow:none; }
+  body.light .jobCard .mi{ background:rgba(20,40,80,.06); }
+  body.light .jobCard.active{ background:rgba(111,144,238,.12); box-shadow:none; }
+  body.light .jobCard.active .mi{ background:rgba(111,144,238,.2); }
+  body.light .wid{ box-shadow:0 6px 20px rgba(20,40,80,.06); }
+  body.light .jobCard:hover{ background:rgba(20,40,80,.05); }
+  body.light .jobCard.active{ background:rgba(111,144,238,.1); border-color:rgba(111,144,238,.22); }
 
   /* ===== Premium look „AI Visual Design" (gradienty, poświaty, szkło) ===== */
   :root{ --accent:#6f90ee; --accent2:#8f7fe0; --grad:linear-gradient(135deg,#93b4f5 0%,#b7a8f0 100%); }
@@ -168,7 +179,8 @@
 
   /* ===== OVERVIEW — bento analityczne (Apple-like, 3D) ===== */
   #overview{ padding:14px 20px 0; } #overview:empty{ display:none; }
-  .bento{ display:grid; grid-template-columns:repeat(4,1fr) 1.45fr 1.55fr; grid-auto-rows:minmax(148px,auto); gap:14px; }
+  .bento{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .bento .w-line{ grid-column:span 2; }
   @media(max-width:1240px){ .bento{ grid-template-columns:repeat(2,1fr); } }
   .wid{ position:relative; border-radius:20px; padding:15px 17px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid rgba(255,255,255,.09); box-shadow:0 12px 34px rgba(0,0,0,.3); overflow:hidden; opacity:0; transform:translateY(16px);
@@ -326,6 +338,7 @@ const IC={
   upload:'<svg class="i" viewBox="0 0 24 24"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M5 16v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>',
   printer:'<svg class="i" viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/></svg>',
   check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
+  briefcase:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
 };
 const CFGKEY='hr-os-cloud-cfg';
 const ini=n=>(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
@@ -400,9 +413,8 @@ function render(){ renderJobs(); renderContent(); }
 function renderJobs(){
   const el=$('jobs'); el.innerHTML='';
   if(!jobs.length){ el.innerHTML='<div class="empty">Brak stanowisk.<br/>Dodaj pierwsze przyciskiem „Stanowisko".</div>'; return; }
-  jobs.forEach(j=>{ const n=cands.filter(c=>c.job_id===j.id).length;
-    const d=document.createElement('div'); d.className='jobCard'+(selJob===j.id?' active':'');
-    d.innerHTML=`<div class="jt">${esc(j.title)}</div><div class="jm">${esc(j.loc||'—')} · ${esc(j.sen||'')}</div><div class="jc">${n} kandydatów</div>`;
+  jobs.forEach(j=>{ const d=document.createElement('div'); d.className='jobCard'+(selJob===j.id?' active':'');
+    d.innerHTML=`<span class="mi">${IC.briefcase}</span><span class="jt">${esc(j.title)}</span>`;
     d.onclick=()=>{ selJob=j.id; render(); }; el.appendChild(d); });
 }
 function renderContent(){
@@ -434,6 +446,21 @@ const OVICO={
   star:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8fdcb4" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.9 6 6.6.9-4.8 4.6 1.1 6.5L12 18.9 6.2 21l1.1-6.5L2.5 9.9 9.1 9z"/></svg>',
   chat:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f3caa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
 };
+function smoothPath(pts){
+  if(pts.length<2) return pts.length?`M ${pts[0][0]} ${pts[0][1]}`:'';
+  let d='M '+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+  for(let i=0;i<pts.length-1;i++){ const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+    const c1x=p1[0]+(p2[0]-p0[0])/6,c1y=p1[1]+(p2[1]-p0[1])/6,c2x=p2[0]-(p3[0]-p1[0])/6,c2y=p2[1]-(p3[1]-p1[1])/6;
+    d+=` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`; }
+  return d;
+}
+function svgLineArea(vals){
+  vals=(vals&&vals.length)?vals.slice():[0,0]; if(vals.length===1) vals=[vals[0],vals[0]];
+  const W=320,H=120,pad=10;
+  const pts=vals.map((v,i)=>[pad+(i/(vals.length-1))*(W-2*pad), H-pad-(Math.max(0,Math.min(100,v))/100)*(H-2*pad-4)]);
+  const line=smoothPath(pts), area=line+` L ${(W-pad).toFixed(1)} ${H-pad} L ${pad} ${H-pad} Z`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block"><defs><linearGradient id="lineArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#93b4f5" stop-opacity=".34"/><stop offset="1" stop-color="#93b4f5" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#lineArea)"/><path d="${line}" fill="none" stroke="#7d9bef" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
 function svgSpark(vals,color){
   vals=(vals&&vals.length)?vals:[0,0]; if(vals.length===1) vals=[vals[0],vals[0]];
   const w=140,h=42,max=Math.max.apply(null,vals),min=Math.min.apply(null,vals),rng=(max-min)||1;
@@ -467,6 +494,7 @@ function renderOverview(job,list){
     ${kpi(OVICO.target,'Śr. dopasowanie',avg,'%','#b7a8f0',svgSpark(spk,'#b7a8f0'))}
     ${kpi(OVICO.star,'Najlepszy',best,'%','#8fdcb4',svgSpark(spk,'#8fdcb4'))}
     ${kpi(OVICO.chat,'Do rozmowy',invited,'','#f3caa0',svgSpark(perStage.map(s=>s.n),'#f3caa0'))}
+    <div class="wid w-line"><div class="wt">Rozkład dopasowań AI</div><div class="ws">wyniki kandydatów wg dopasowania</div><div style="margin-top:10px">${svgLineArea(spk)}</div></div>
     <div class="wid"><div class="wt">Trafność dopasowania AI</div><div class="ws">rozkład jakości kandydatów</div>
       <div style="position:relative; display:flex; justify-content:center; margin-top:2px">${svgGauge(avg)}<div class="gauge-num" style="position:absolute; top:58%; left:50%; transform:translate(-50%,-50%)">${avg}%</div></div>
       <div class="legend" style="justify-content:center; margin-top:2px"><span><i style="background:#8fdcb4"></i>Doskonałe ${exc}</span><span><i style="background:#93b4f5"></i>Dobre ${good}</span><span><i style="background:#f2a1a8"></i>Słabe ${weak}</span></div>
@@ -580,7 +608,7 @@ window.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelec
 // ---------- Motyw jasny / ciemny ----------
 function applyTheme(light){ document.body.classList.toggle('light',light); localStorage.setItem('hr-os-theme',light?'light':'dark'); $('btnTheme').innerHTML=light?(IC.moon+'Ciemny'):(IC.sun+'Jasny'); }
 $('btnTheme').onclick=()=>applyTheme(!document.body.classList.contains('light'));
-applyTheme(localStorage.getItem('hr-os-theme')==='light');
+applyTheme(localStorage.getItem('hr-os-theme')!=='dark');
 
 // ---------- Wczytywanie CV z pliku (PDF / Word / TXT) ----------
 if(window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
@@ -677,7 +705,13 @@ $('rankPrint').onclick=()=>{
 
 // ---------- Tryb podglądu / demo (bez logowania): otwórz z #demo ----------
 function showDemo(){
-  jobs=[{id:'demo',title:'Menadżer restauracji',loc:'Katowice',sen:'Mid',skills:['Zarządzanie zespołem','Food cost','Grafiki','HACCP','POS','Obsługa gościa'],descr:'Zarządzanie restauracją i zespołem.'}];
+  jobs=[
+    {id:'demo',title:'Menadżer restauracji',loc:'Katowice',sen:'Mid',skills:['Zarządzanie zespołem','Food cost','Grafiki','HACCP','POS','Obsługa gościa'],descr:'Zarządzanie restauracją i zespołem.'},
+    {id:'j2',title:'Asystent Menadżera',loc:'Katowice',sen:'Junior',skills:['Obsługa gościa','Grafiki'],descr:''},
+    {id:'j3',title:'Kucharz',loc:'Katowice',sen:'Mid',skills:['HACCP','Kuchnia'],descr:''},
+    {id:'j4',title:'Kelner',loc:'Katowice',sen:'Junior',skills:['Obsługa gościa','POS'],descr:''},
+    {id:'j5',title:'Barman',loc:'Katowice',sen:'Mid',skills:['Bar','Obsługa gościa'],descr:''}
+  ];
   selJob='demo';
   const seed=[['Katarzyna Lewandowska',95,'Screening'],['Magdalena Król',90,'Screening'],['Beata Dąbrowska',88,'Rozmowa'],['Marcin Zieliński',80,'Nowy'],['Rafał Mazur',78,'Nowy'],['Anna Wójcik',65,'Nowy'],['Piotr Kaczmarek',55,'Nowy'],['Krzysztof Jankowski',52,'Screening'],['Tomasz Nowak',40,'Nowy'],['Julia Wiśniewska',18,'Nowy']];
   cands=seed.map((s,i)=>({id:'d'+i,job_id:'demo',name:s[0],role:'Menadżer restauracji',loc:'',match_pct:s[1],ai:'Ocena AI na podstawie CV i wymagań stanowiska (dopasowanie kompetencji).',stage:s[2],consent:true,decided_by:'—'}));
