@@ -140,8 +140,10 @@
   body.light .jobCard .mi{ background:rgba(20,40,80,.06); }
   body.light .jobCard.active{ background:rgba(111,144,238,.12); box-shadow:none; }
   body.light .jobCard.active .mi{ background:rgba(111,144,238,.2); }
-  body.light .wid{ box-shadow:0 1px 3px rgba(20,40,80,.05), 0 8px 18px rgba(20,40,80,.07), 0 22px 42px rgba(20,40,80,.06); }
-  body.light .wid:hover{ box-shadow:0 4px 10px rgba(20,40,80,.09), 0 22px 48px rgba(20,40,80,.14); }
+  body.light .wid{ box-shadow:0 2px 8px rgba(20,40,80,.10), 0 16px 34px rgba(20,40,80,.15), 0 42px 72px rgba(20,40,80,.12); }
+  body.light .wid:hover{ box-shadow:0 8px 18px rgba(20,40,80,.15), 0 34px 66px rgba(20,40,80,.22); }
+  body.light .cand{ box-shadow:0 2px 8px rgba(20,40,80,.08), 0 12px 28px rgba(20,40,80,.12); }
+  body.light .cand:hover{ box-shadow:0 10px 26px rgba(20,40,80,.18); }
   body.light .jobCard:hover{ background:rgba(20,40,80,.05); }
   body.light .jobCard.active{ background:rgba(111,144,238,.1); border-color:rgba(111,144,238,.22); }
 
@@ -192,9 +194,9 @@
   @media(max-width:1240px){ .bento{ grid-template-columns:repeat(2,1fr); } }
   .wid{ position:relative; border-radius:20px; padding:15px 17px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid rgba(255,255,255,.09); box-shadow:0 12px 34px rgba(0,0,0,.3); overflow:hidden; opacity:0; transform:translateY(16px);
-    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 2px 6px rgba(8,14,30,.12), 0 10px 22px rgba(8,14,30,.16), 0 26px 50px rgba(8,14,30,.14); }
+    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 4px 12px rgba(8,14,30,.32), 0 22px 44px rgba(8,14,30,.5), 0 46px 90px rgba(8,14,30,.34); }
   .wid::after{ content:""; position:absolute; left:16px; right:16px; top:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent); pointer-events:none; }
-  .wid:hover{ box-shadow:0 6px 14px rgba(6,11,24,.28), 0 30px 64px rgba(6,11,24,.4); border-color:rgba(255,255,255,.16); }
+  .wid:hover{ box-shadow:0 10px 22px rgba(6,11,24,.4), 0 44px 88px rgba(6,11,24,.55); border-color:rgba(255,255,255,.18); }
   body.light .wid::after{ background:linear-gradient(90deg,transparent,rgba(20,40,80,.1),transparent); }
   body.light .wid:hover{ box-shadow:0 18px 40px rgba(20,40,80,.13); }
   @keyframes widIn{ to{ opacity:1; transform:translateY(0); } }
@@ -272,12 +274,12 @@
       <aside id="side">
         <div class="brand"><span class="logo">HR-OS</span><span class="badge"><span class="live"></span> Chmura</span></div>
         <button class="btn primary sideNew" id="btnNewJob"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nowe stanowisko</button>
+        <a href="hr-os.html" class="jobCard navlink" style="text-decoration:none"><span class="mi"><svg class="i" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></span><span class="jt">Scena 3D</span></a>
         <div class="h"><span class="t">Stanowiska</span></div>
         <div id="jobs"></div>
         <div class="sideFoot">
           <div class="acct"><span class="who" id="whoami"></span></div>
           <div class="footBtns">
-            <a href="hr-os.html" class="iconbtn" title="Scena 3D" style="text-decoration:none"><svg class="i" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg></a>
             <button class="iconbtn" id="btnTheme" title="Motyw"></button>
             <button class="iconbtn" id="btnSettings" title="Ustawienia AI"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l1.9 5.8 5.8 1.9-5.8 1.9L12 18.4l-1.9-5.8L4.3 10.7l5.8-1.9z"/></svg></button>
             <button class="iconbtn" id="btnLogout" title="Wyloguj"><svg class="i" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></button>
@@ -356,7 +358,18 @@ const IC={
   printer:'<svg class="i" viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7" rx="1"/></svg>',
   check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
   briefcase:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+  person:'<svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  chef:'<svg class="i" viewBox="0 0 24 24"><path d="M6 13.5A3.5 3.5 0 0 1 5 6.6 4.5 4.5 0 0 1 16 5a3.5 3.5 0 0 1 2 8.5"/><path d="M6 13v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-6"/><path d="M9 20v-4M15 20v-4"/></svg>',
+  plate:'<svg class="i" viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 12a7 7 0 0 1 7 6H5a7 7 0 0 1 7-6z"/><path d="M12 12V9"/><circle cx="12" cy="7.5" r="1"/></svg>',
+  glass:'<svg class="i" viewBox="0 0 24 24"><path d="M5 4h14l-6 8v6"/><path d="M9 18h6"/></svg>',
+  cube:'<svg class="i" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>',
 };
+function jobIcon(t){ t=(t||'').toLowerCase();
+  if(/kuchar|kuchni|cook|chef/.test(t)) return IC.chef;
+  if(/kelner|waiter|obsług/.test(t)) return IC.plate;
+  if(/barman|bar|bartend/.test(t)) return IC.glass;
+  if(/asystent|assistant|recept|host/.test(t)) return IC.person;
+  return IC.briefcase; }
 const CFGKEY='hr-os-cloud-cfg';
 const ini=n=>(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const mkol=m=> m>=85?'#8fdcb4' : m>=70?'#f3caa0' : '#f2a1a8';
@@ -431,7 +444,7 @@ function renderJobs(){
   const el=$('jobs'); el.innerHTML='';
   if(!jobs.length){ el.innerHTML='<div class="empty">Brak stanowisk.<br/>Dodaj pierwsze przyciskiem „Stanowisko".</div>'; return; }
   jobs.forEach(j=>{ const d=document.createElement('div'); d.className='jobCard'+(selJob===j.id?' active':'');
-    d.innerHTML=`<span class="mi">${IC.briefcase}</span><span class="jt">${esc(j.title)}</span>`;
+    d.innerHTML=`<span class="mi">${jobIcon(j.title)}</span><span class="jt">${esc(j.title)}</span>`;
     d.onclick=()=>{ selJob=j.id; render(); }; el.appendChild(d); });
 }
 function renderContent(){
