@@ -140,7 +140,8 @@
   body.light .jobCard .mi{ background:rgba(20,40,80,.06); }
   body.light .jobCard.active{ background:rgba(111,144,238,.12); box-shadow:none; }
   body.light .jobCard.active .mi{ background:rgba(111,144,238,.2); }
-  body.light .wid{ box-shadow:0 6px 20px rgba(20,40,80,.06); }
+  body.light .wid{ box-shadow:0 1px 3px rgba(20,40,80,.05), 0 8px 18px rgba(20,40,80,.07), 0 22px 42px rgba(20,40,80,.06); }
+  body.light .wid:hover{ box-shadow:0 4px 10px rgba(20,40,80,.09), 0 22px 48px rgba(20,40,80,.14); }
   body.light .jobCard:hover{ background:rgba(20,40,80,.05); }
   body.light .jobCard.active{ background:rgba(111,144,238,.1); border-color:rgba(111,144,238,.22); }
 
@@ -187,13 +188,13 @@
   /* ===== OVERVIEW — bento analityczne (Apple-like, 3D) ===== */
   #overview{ padding:14px 20px 0; } #overview:empty{ display:none; }
   .bento{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-  .bento .w-line{ grid-column:span 2; }
+  .bento .w-gauge, .bento .w-funnel{ grid-column:span 2; }
   @media(max-width:1240px){ .bento{ grid-template-columns:repeat(2,1fr); } }
   .wid{ position:relative; border-radius:20px; padding:15px 17px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid rgba(255,255,255,.09); box-shadow:0 12px 34px rgba(0,0,0,.3); overflow:hidden; opacity:0; transform:translateY(16px);
-    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 8px 24px rgba(0,0,0,.22); }
+    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 2px 6px rgba(8,14,30,.12), 0 10px 22px rgba(8,14,30,.16), 0 26px 50px rgba(8,14,30,.14); }
   .wid::after{ content:""; position:absolute; left:16px; right:16px; top:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent); pointer-events:none; }
-  .wid:hover{ box-shadow:0 20px 48px rgba(6,11,24,.55); border-color:rgba(255,255,255,.14); }
+  .wid:hover{ box-shadow:0 6px 14px rgba(6,11,24,.28), 0 30px 64px rgba(6,11,24,.4); border-color:rgba(255,255,255,.16); }
   body.light .wid::after{ background:linear-gradient(90deg,transparent,rgba(20,40,80,.1),transparent); }
   body.light .wid:hover{ box-shadow:0 18px 40px rgba(20,40,80,.13); }
   @keyframes widIn{ to{ opacity:1; transform:translateY(0); } }
@@ -214,6 +215,11 @@
   /* sprężysty modal (Apple) */
   .overlay .card{ animation:cardIn .42s cubic-bezier(.2,.9,.25,1.08); }
   @keyframes cardIn{ from{ opacity:0; transform:translateY(20px) scale(.955); } }
+  /* kaskadowe wejście kolumn (Apple) + unoszenie kart */
+  #board .col{ animation:colIn .55s cubic-bezier(.2,.85,.25,1) both; }
+  @keyframes colIn{ from{ opacity:0; transform:translateY(16px); } }
+  .cand{ transition:transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s, border-color .2s; }
+  .cand:hover{ transform:translateY(-4px) scale(1.012); }
 </style>
 </head>
 <body class="entering">
@@ -439,7 +445,7 @@ function renderContent(){
   $('bulkCand').onclick=()=>{ candForJobId=job.id; $('bulkCvFile').click(); };
   $('rankBtn').onclick=()=>openRanking(job.id);
   board.innerHTML='';
-  ETAPY.forEach(et=>{ const col=document.createElement('div'); col.className='col'; col.dataset.stage=et.id;
+  ETAPY.forEach((et,ci)=>{ const col=document.createElement('div'); col.className='col'; col.dataset.stage=et.id; col.style.animationDelay=(ci*55)+'ms';
     const inCol=list.filter(c=>c.stage===et.id).sort((a,b)=>(b.match_pct||0)-(a.match_pct||0));
     col.innerHTML=`<div class="ch"><span class="dot" style="background:${et.kolor}"></span>${et.id}<span class="cnt">${inCol.length}</span></div><div class="list"></div>`;
     const listEl=col.querySelector('.list'); if(!inCol.length) listEl.innerHTML='<div class="empty">—</div>';
@@ -505,12 +511,11 @@ function renderOverview(job,list){
     ${kpi(OVICO.target,'Śr. dopasowanie',avg,'%','#b7a8f0',svgSpark(spk,'#b7a8f0'))}
     ${kpi(OVICO.star,'Najlepszy',best,'%','#8fdcb4',svgSpark(spk,'#8fdcb4'))}
     ${kpi(OVICO.chat,'Do rozmowy',invited,'','#f3caa0',svgSpark(perStage.map(s=>s.n),'#f3caa0'))}
-    <div class="wid w-line"><div class="wt">Rozkład dopasowań AI</div><div class="ws">wyniki kandydatów wg dopasowania</div><div style="margin-top:10px">${svgLineArea(spk)}</div></div>
-    <div class="wid"><div class="wt">Trafność dopasowania AI</div><div class="ws">rozkład jakości kandydatów</div>
+    <div class="wid w-gauge"><div class="wt">Trafność dopasowania AI</div><div class="ws">rozkład jakości kandydatów</div>
       <div style="position:relative; display:flex; justify-content:center; margin-top:2px">${svgGauge(avg)}<div class="gauge-num" style="position:absolute; top:58%; left:50%; transform:translate(-50%,-50%)">${avg}%</div></div>
       <div class="legend" style="justify-content:center; margin-top:2px"><span><i style="background:#8fdcb4"></i>Doskonałe ${exc}</span><span><i style="background:#93b4f5"></i>Dobre ${good}</span><span><i style="background:#f2a1a8"></i>Słabe ${weak}</span></div>
     </div>
-    <div class="wid"><div class="wt">Lejek rekrutacji</div><div class="ws">kandydaci na etapach</div>
+    <div class="wid w-funnel"><div class="wt">Lejek rekrutacji</div><div class="ws">kandydaci na etapach</div>
       <div class="bars">${perStage.map(s=>`<div class="b"><div class="col2" data-h="${Math.round(s.n/maxS*100)}" style="height:0"></div><div class="lb">${s.n}</div></div>`).join('')}</div>
       <div class="legend">${perStage.map(s=>`<span><i style="background:${s.kolor}"></i>${esc(s.id)}</span>`).join('')}</div>
     </div>
@@ -520,7 +525,7 @@ function renderOverview(job,list){
 function animateOverview(ov){
   ov.querySelectorAll('.wid').forEach((w,i)=>{ w.style.animationDelay=(i*70)+'ms';
     w.addEventListener('mousemove',e=>{ const r=w.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
-      w.style.transform=`perspective(820px) rotateY(${(x*6).toFixed(2)}deg) rotateX(${(-y*6).toFixed(2)}deg) translateY(-3px)`; });
+      w.style.transform=`perspective(760px) rotateY(${(x*8).toFixed(2)}deg) rotateX(${(-y*8).toFixed(2)}deg) translateY(-4px) scale(1.02)`; });
     w.addEventListener('mouseleave',()=>{ w.style.transform=''; });
   });
   ov.querySelectorAll('[data-count]').forEach(el=>{ const target=parseFloat(el.dataset.count)||0, suf=el.dataset.suffix||''; const t0=performance.now(),dur=900;
