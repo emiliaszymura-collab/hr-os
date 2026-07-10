@@ -27,7 +27,7 @@
   *{ margin:0; padding:0; box-sizing:border-box; }
   html,body{ height:100%; }
   body{ background:radial-gradient(120% 90% at 50% 0%, #0e1830, #070b14); color:var(--tekst);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; letter-spacing:-.012em; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
   button{ font-family:inherit; cursor:pointer; } .muted{ color:var(--przygas); }
   .logo{ font-weight:800; font-size:19px; background:linear-gradient(90deg,#bcd6ff,#93b4f5); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .btn{ font-size:13px; font-weight:600; color:var(--tekst); background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:8px 13px; }
@@ -70,7 +70,7 @@
   .jobCard .jt{ font-size:13.5px; font-weight:600; } .jobCard.active .jt{ color:var(--accent); }
   #content{ flex:1; min-width:0; display:flex; flex-direction:column; }
   #jobHead{ padding:16px 20px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; }
-  #jobHead h1{ font-size:20px; font-weight:750; } #jobHead .sub{ font-size:13px; color:var(--przygas); margin-top:3px; }
+  #jobHead h1{ font-size:23px; font-weight:670; letter-spacing:-.024em; } #jobHead .sub{ font-size:13px; color:var(--przygas); margin-top:4px; letter-spacing:-.005em; }
   #jobHead .chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; } .chip{ font-size:11.5px; padding:4px 10px; border-radius:999px; background:rgba(120,160,220,.12); border:1px solid var(--line); }
   #jobHead .acts{ margin-left:auto; display:flex; gap:8px; }
   #board{ flex:1; overflow-x:auto; overflow-y:hidden; display:flex; gap:12px; padding:16px 20px; }
@@ -140,10 +140,10 @@
   body.light .jobCard .mi{ background:rgba(20,40,80,.06); }
   body.light .jobCard.active{ background:rgba(111,144,238,.12); box-shadow:none; }
   body.light .jobCard.active .mi{ background:rgba(111,144,238,.2); }
-  body.light .wid{ box-shadow:0 2px 8px rgba(20,40,80,.10), 0 16px 34px rgba(20,40,80,.15), 0 42px 72px rgba(20,40,80,.12); }
-  body.light .wid:hover{ box-shadow:0 8px 18px rgba(20,40,80,.15), 0 34px 66px rgba(20,40,80,.22); }
-  body.light .cand{ box-shadow:0 2px 8px rgba(20,40,80,.08), 0 12px 28px rgba(20,40,80,.12); }
-  body.light .cand:hover{ box-shadow:0 10px 26px rgba(20,40,80,.18); }
+  body.light .wid{ box-shadow:0 4px 10px rgba(20,40,80,.09), 0 26px 50px -8px rgba(20,40,80,.24), 0 64px 100px -28px rgba(20,40,80,.32); }
+  body.light .wid:hover{ box-shadow:0 12px 26px rgba(20,40,80,.16), 0 48px 90px -18px rgba(20,40,80,.34); }
+  body.light .cand{ box-shadow:0 3px 8px rgba(20,40,80,.08), 0 18px 38px -8px rgba(20,40,80,.18); }
+  body.light .cand:hover{ box-shadow:0 14px 32px rgba(20,40,80,.22); }
   body.light .jobCard:hover{ background:rgba(20,40,80,.05); }
   body.light .jobCard.active{ background:rgba(111,144,238,.1); border-color:rgba(111,144,238,.22); }
 
@@ -194,9 +194,9 @@
   @media(max-width:1240px){ .bento{ grid-template-columns:repeat(2,1fr); } }
   .wid{ position:relative; border-radius:20px; padding:15px 17px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid rgba(255,255,255,.09); box-shadow:0 12px 34px rgba(0,0,0,.3); overflow:hidden; opacity:0; transform:translateY(16px);
-    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 4px 12px rgba(8,14,30,.32), 0 22px 44px rgba(8,14,30,.5), 0 46px 90px rgba(8,14,30,.34); }
+    animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 6px 16px rgba(4,8,20,.4), 0 30px 60px -8px rgba(4,8,20,.6), 0 70px 110px -30px rgba(4,8,20,.55); }
   .wid::after{ content:""; position:absolute; left:16px; right:16px; top:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent); pointer-events:none; }
-  .wid:hover{ box-shadow:0 10px 22px rgba(6,11,24,.4), 0 44px 88px rgba(6,11,24,.55); border-color:rgba(255,255,255,.18); }
+  .wid:hover{ box-shadow:0 16px 34px rgba(4,8,20,.5), 0 56px 110px -20px rgba(4,8,20,.65); border-color:rgba(255,255,255,.2); }
   body.light .wid::after{ background:linear-gradient(90deg,transparent,rgba(20,40,80,.1),transparent); }
   body.light .wid:hover{ box-shadow:0 18px 40px rgba(20,40,80,.13); }
   @keyframes widIn{ to{ opacity:1; transform:translateY(0); } }
@@ -204,10 +204,11 @@
   .kpi .kh{ display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--przygas); font-weight:600; }
   .kpi .ico-r{ margin-left:auto; opacity:.26; }
   .kpi .kh .ico{ width:27px; height:27px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(120,160,220,.14); }
-  .kpi .val{ font-size:29px; font-weight:850; letter-spacing:-.02em; margin-top:10px; line-height:1; position:relative; z-index:2; }
+  .kpi .val{ font-size:32px; font-weight:680; letter-spacing:-.035em; font-variant-numeric:tabular-nums; margin-top:11px; line-height:1; position:relative; z-index:2; }
   .kpi .spark{ position:absolute; left:0; right:0; bottom:0; width:100%; height:42px; }
-  .wid .wt{ font-size:12.5px; font-weight:700; } .wid .ws{ font-size:10.5px; color:var(--przygas); margin-top:1px; }
-  .gauge-num{ font-size:26px; font-weight:850; letter-spacing:-.02em; }
+  .wid .wt{ font-size:13px; font-weight:600; letter-spacing:-.008em; } .wid .ws{ font-size:11px; color:var(--przygas); margin-top:2px; font-weight:450; }
+  .kpi .kh{ letter-spacing:0; }
+  .gauge-num{ font-size:27px; font-weight:680; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
   .legend{ display:flex; flex-wrap:wrap; gap:5px 12px; margin-top:10px; font-size:10.5px; color:var(--przygas); }
   .legend i{ width:9px; height:9px; border-radius:3px; display:inline-block; margin-right:5px; }
   .bars{ display:flex; align-items:flex-end; gap:9px; height:72px; margin-top:12px; }
