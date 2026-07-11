@@ -505,16 +505,20 @@ function svgSpark(vals,color){
 }
 function svgGauge(pct){
   const p=Math.max(0,Math.min(100,pct));
-  const cx=70,cy=70,R=50,sw=22, C=2*Math.PI*R, off=(C*(1-p/100)).toFixed(1);
+  const cx=70,cy=70,R=47,sw=27, C=2*Math.PI*R, off=(C*(1-p/100)).toFixed(1);
+  const Ro=R+sw/2-3, Ri=R-sw/2+3, Co=2*Math.PI*Ro, Ci=2*Math.PI*Ri;
   return `<svg viewBox="0 0 140 140" width="140" height="140" style="display:block;margin:0 auto">
     <defs>
-      <linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cfdafb"/><stop offset=".45" stop-color="#6f90ee"/><stop offset="1" stop-color="#a99bf0"/></linearGradient>
-      <linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".9"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
-      <filter id="fRing" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#070a14" flood-opacity=".55"/></filter>
+      <linearGradient id="gRing" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#eef3ff"/><stop offset=".26" stop-color="#a2baf8"/><stop offset=".54" stop-color="#6f90ee"/><stop offset=".78" stop-color="#8f7fe0"/><stop offset="1" stop-color="#cabff6"/>
+      </linearGradient>
+      <linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+      <filter id="fRing" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#050810" flood-opacity=".6"/></filter>
     </defs>
-    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(150,160,195,.13)" stroke-width="${sw}"/>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(150,160,195,.12)" stroke-width="${sw}"/>
     <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="url(#gRing)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 ${cx} ${cy})" filter="url(#fRing)"/>
-    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="url(#gGloss)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 ${cx} ${cy})" opacity=".6"/>
+    <circle cx="${cx}" cy="${cy}" r="${Ro.toFixed(1)}" fill="none" stroke="url(#gGloss)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="${Co.toFixed(1)}" stroke-dashoffset="${(Co*(1-p/100)).toFixed(1)}" transform="rotate(-90 ${cx} ${cy})" opacity=".9"/>
+    <circle cx="${cx}" cy="${cy}" r="${Ri.toFixed(1)}" fill="none" stroke="rgba(18,26,54,.3)" stroke-width="1.6" stroke-dasharray="${Ci.toFixed(1)}" stroke-dashoffset="${(Ci*(1-p/100)).toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"/>
   </svg>`;
 }
 function renderOverview(job,list){
