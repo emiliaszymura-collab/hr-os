@@ -216,7 +216,13 @@
   .legend i{ width:9px; height:9px; border-radius:3px; display:inline-block; margin-right:5px; }
   .bars{ display:flex; align-items:flex-end; gap:9px; height:72px; margin-top:12px; }
   .bars .b{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; height:100%; justify-content:flex-end; }
-  .bars .b .col2{ width:100%; border-radius:7px 7px 3px 3px; background:var(--grad); min-height:4px; transition:height .9s cubic-bezier(.2,.8,.2,1); }
+  .bars .b .col2{ width:100%; border-radius:7px 7px 3px 3px; background:linear-gradient(180deg,#bccdf9,#6f90ee 58%,#5c78d6); box-shadow:inset 0 2px 0 rgba(255,255,255,.45), 0 5px 12px rgba(20,30,60,.32); min-height:5px; transition:height .9s cubic-bezier(.2,.8,.2,1); }
+  /* szklany połysk 3D na kartach */
+  .wid::before{ content:""; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(130% 82% at 16% -8%, rgba(255,255,255,.12), transparent 56%); pointer-events:none; }
+  body.light .wid::before{ background:radial-gradient(130% 82% at 16% -8%, rgba(255,255,255,.85), transparent 58%); }
+  .cand{ position:relative; overflow:hidden; }
+  .cand::before{ content:""; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(120% 72% at 18% -10%, rgba(255,255,255,.09), transparent 54%); pointer-events:none; }
+  body.light .cand::before{ background:radial-gradient(120% 72% at 18% -10%, rgba(255,255,255,.7), transparent 56%); }
   .bars .b .lb{ font-size:11px; font-weight:700; }
   /* sprężysty modal (Apple) */
   .overlay .card{ animation:cardIn .42s cubic-bezier(.2,.9,.25,1.08); }
@@ -568,7 +574,11 @@ function candCard(c){ const m=c.match_pct;
     <div class="mv"><button data-a="back">‹ Cofnij</button><button data-a="fwd">Dalej ›</button></div>`;
   d.querySelector('[data-a="fwd"]').onclick=e=>{ e.stopPropagation(); stepStage(c,1); };
   d.querySelector('[data-a="back"]').onclick=e=>{ e.stopPropagation(); stepStage(c,-1); };
-  d.addEventListener('dragstart',e=>e.dataTransfer.setData('id',c.id)); d.onclick=()=>openDrawer(c.id); return d;
+  d.addEventListener('dragstart',e=>e.dataTransfer.setData('id',c.id)); d.onclick=()=>openDrawer(c.id);
+  d.addEventListener('mousemove',e=>{ const r=d.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+    d.style.transform=`perspective(620px) rotateY(${(x*7).toFixed(1)}deg) rotateX(${(-y*7).toFixed(1)}deg) translateY(-4px)`; });
+  d.addEventListener('mouseleave',()=>{ d.style.transform=''; });
+  return d;
 }
 
 // ---------- Etapy (zapis do chmury) ----------

@@ -265,7 +265,7 @@
   .themeSeg button.on{ background:#6f90ee; color:#fff; }
   body.light .themeSeg{ background:rgba(20,40,80,.06); border-color:rgba(20,40,80,.14); }
   body.light{ background:#eef2f8; }
-  body.light #stage img{ filter:invert(1) hue-rotate(186deg) brightness(.86) contrast(1.15) saturate(.9); }
+  body.light #stage img{ filter:invert(1) hue-rotate(186deg) brightness(.72) contrast(1.28) saturate(.95); }
   body.light #thesis h1{ color:#14203a; text-shadow:0 1px 12px rgba(255,255,255,.5); }
   body.light #thesis h1 .blue{ color:#3a72e0; }
   body.light #thesis p{ color:#45536e; text-shadow:none; }
@@ -286,7 +286,8 @@
     var MOON='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>';
     function apply(light){ document.body.classList.toggle('light',light); try{localStorage.setItem(K,light?'light':'dark');}catch(e){}
       var seg=document.querySelectorAll('#themeSeg button'); for(var i=0;i<seg.length;i++){ seg[i].classList.toggle('on', seg[i].getAttribute('data-th')===(light?'light':'dark')); } }
-    apply(localStorage.getItem(K)==='light');
+    function wantLight(){ var h=(location.hash+location.search).toLowerCase(); if(h.indexOf('light')>=0) return true; if(h.indexOf('dark')>=0) return false; return localStorage.getItem(K)==='light'; }
+    apply(wantLight());
     document.addEventListener('DOMContentLoaded',function(){ var seg=document.querySelectorAll('#themeSeg button');
       for(var i=0;i<seg.length;i++){ (function(b){ b.onclick=function(){ apply(b.getAttribute('data-th')==='light'); }; })(seg[i]); }
       apply(document.body.classList.contains('light')); });
