@@ -431,11 +431,12 @@ $('btnLogout').onclick=async()=>{ await sb.auth.signOut(); location.reload(); };
 async function initAuth(){
   const {data}=await sb.auth.getSession();
   if(data.session){ enterApp(data.session); }
+  else if(localStorage.getItem('hr-os-mode')==='demo'){ showDemo(); }
   else{ showAuth(); }
   sb.auth.onAuthStateChange((_e,session)=>{ if(session){ enterApp(session); } });
 }
 let entered=false;
-async function enterApp(session){ if(entered) return; entered=true; $('whoami').textContent=session.user.email; showApp(); await loadAll(); }
+async function enterApp(session){ if(entered) return; entered=true; localStorage.setItem('hr-os-mode','auth'); $('whoami').textContent=session.user.email; showApp(); await loadAll(); }
 
 // ---------- Wczytanie danych z chmury ----------
 async function loadAll(){
@@ -522,7 +523,7 @@ function svgGauge(pct){
       <filter id="fRing" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#050810" flood-opacity=".6"/></filter>
     </defs>
     <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(150,160,195,.12)" stroke-width="${sw}"/>
-    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="url(#gRing)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 ${cx} ${cy})" filter="url(#fRing)"/>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="url(#gRing)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off}" transform="rotate(-90 ${cx} ${cy})"/>
     <circle cx="${cx}" cy="${cy}" r="${Ro.toFixed(1)}" fill="none" stroke="url(#gGloss)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="${Co.toFixed(1)}" stroke-dashoffset="${(Co*(1-p/100)).toFixed(1)}" transform="rotate(-90 ${cx} ${cy})" opacity=".9"/>
     <circle cx="${cx}" cy="${cy}" r="${Ri.toFixed(1)}" fill="none" stroke="rgba(18,26,54,.3)" stroke-width="1.6" stroke-dasharray="${Ci.toFixed(1)}" stroke-dashoffset="${(Ci*(1-p/100)).toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"/>
   </svg>`;
@@ -769,13 +770,13 @@ function showDemo(){
   selJob='demo';
   const seed=[['Katarzyna Lewandowska',95,'Screening'],['Magdalena Król',90,'Screening'],['Beata Dąbrowska',88,'Rozmowa'],['Marcin Zieliński',80,'Nowy'],['Rafał Mazur',78,'Nowy'],['Anna Wójcik',65,'Nowy'],['Piotr Kaczmarek',55,'Nowy'],['Krzysztof Jankowski',52,'Screening'],['Tomasz Nowak',40,'Nowy'],['Julia Wiśniewska',18,'Nowy']];
   cands=seed.map((s,i)=>({id:'d'+i,job_id:'demo',name:s[0],role:'Menadżer restauracji',loc:'',match_pct:s[1],ai:'Ocena AI na podstawie CV i wymagań stanowiska (dopasowanie kompetencji).',stage:s[2],consent:true,decided_by:'—'}));
-  showApp(); $('whoami').textContent='tryb demo'; render();
+  showApp(); $('whoami').textContent='tryb demo'; render(); localStorage.setItem('hr-os-mode','demo');
 }
 // ---------- Start ----------
 (function start(){
   if(location.hash.indexOf('demo')>=0){ return showDemo(); }
   const cfg=getCfg();
-  if(!cfg){ showCfg(); return; }
+  if(!cfg){ if(localStorage.getItem('hr-os-mode')==='demo') return showDemo(); showCfg(); return; }
   $('cfgUrl').value=cfg.url;
   try{ sb=window.supabase.createClient(cfg.url,cfg.key); initAuth(); }
   catch(e){ showCfg(); $('cfgErr').textContent='Zapisane połączenie nie działa — wpisz ponownie.'; }
