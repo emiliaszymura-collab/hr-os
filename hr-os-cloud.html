@@ -74,11 +74,11 @@
   .jobCard.active .mi{ background:rgba(111,144,238,.22); color:var(--accent); }
   .jobCard .jt{ font-size:13.5px; font-weight:600; } .jobCard.active .jt{ color:var(--accent); }
   #content{ flex:1; min-width:0; display:flex; flex-direction:column; }
-  #jobHead{ padding:16px 20px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; }
-  #jobHead h1{ font-size:23px; font-weight:670; letter-spacing:-.024em; } #jobHead .sub{ font-size:13px; color:var(--przygas); margin-top:4px; letter-spacing:-.005em; }
+  #jobHead{ padding:24px 30px 18px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+  #jobHead h1{ font-size:28px; font-weight:680; letter-spacing:-.03em; } #jobHead .sub{ font-size:13.5px; color:var(--przygas); margin-top:6px; letter-spacing:-.005em; }
   #jobHead .chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; } .chip{ font-size:11.5px; padding:4px 10px; border-radius:999px; background:rgba(120,160,220,.12); border:1px solid var(--line); }
   #jobHead .acts{ margin-left:auto; display:flex; gap:8px; }
-  #board{ flex:1; overflow-x:auto; overflow-y:hidden; display:flex; gap:12px; padding:16px 20px; }
+  #board{ flex:1; overflow-x:auto; overflow-y:hidden; display:flex; gap:16px; padding:20px 30px; }
   .col{ width:236px; flex:0 0 auto; background:rgba(10,17,32,.55); border:1px solid var(--line); border-radius:13px; display:flex; flex-direction:column; max-height:100%; }
   .col.drop{ outline:2px dashed rgba(74,163,255,.6); outline-offset:-3px; }
   .col .ch{ display:flex; align-items:center; gap:8px; padding:11px 12px; border-bottom:1px solid var(--line); font-size:12.5px; font-weight:700; }
@@ -193,11 +193,11 @@
   @view-transition{ navigation:auto; }
 
   /* ===== OVERVIEW — bento analityczne (Apple-like, 3D) ===== */
-  #overview{ padding:14px 20px 0; } #overview:empty{ display:none; }
-  .bento{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  #overview{ padding:20px 30px 2px; } #overview:empty{ display:none; }
+  .bento{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
   .bento .w-gauge, .bento .w-funnel{ grid-column:span 2; }
   @media(max-width:1240px){ .bento{ grid-template-columns:repeat(2,1fr); } }
-  .wid{ position:relative; border-radius:20px; padding:15px 17px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  .wid{ position:relative; border-radius:22px; padding:20px 22px; background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
     border:1px solid rgba(255,255,255,.09); box-shadow:0 12px 34px rgba(0,0,0,.3); overflow:hidden; opacity:0; transform:translateY(16px);
     animation:widIn .6s cubic-bezier(.2,.85,.25,1) forwards; transition:box-shadow .3s, transform .25s cubic-bezier(.2,.8,.2,1); will-change:transform; box-shadow:0 6px 16px rgba(4,8,20,.4), 0 30px 60px -8px rgba(4,8,20,.6), 0 70px 110px -30px rgba(4,8,20,.55); }
   .wid::after{ content:""; position:absolute; left:16px; right:16px; top:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent); pointer-events:none; }
@@ -209,7 +209,7 @@
   .kpi .kh{ display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--przygas); font-weight:600; }
   .kpi .ico-r{ margin-left:auto; opacity:.26; }
   .kpi .kh .ico{ width:27px; height:27px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(120,160,220,.14); }
-  .kpi .val{ font-size:32px; font-weight:680; letter-spacing:-.035em; font-variant-numeric:tabular-nums; margin-top:11px; line-height:1; position:relative; z-index:2; }
+  .kpi .val{ font-size:36px; font-weight:680; letter-spacing:-.038em; font-variant-numeric:tabular-nums; margin-top:14px; line-height:1; position:relative; z-index:2; }
   .kpi .spark{ position:absolute; left:0; right:0; bottom:0; width:100%; height:42px; }
   .wid .wt{ font-size:13px; font-weight:600; letter-spacing:-.008em; } .wid .ws{ font-size:11px; color:var(--przygas); margin-top:2px; font-weight:450; }
   .kpi .kh{ letter-spacing:0; }
