@@ -276,6 +276,9 @@
   body.light #sysbar .os{ color:#1a2740; }
   body.light #terminal{ background:rgba(255,255,255,.92); color:#1a2740; border-color:rgba(20,40,80,.12); }
   body.light #terminal .tabs span.on{ color:#14203a; }
+  /* Animacja robotów WYŁĄCZONA — czysta, statyczna scena */
+  #stage canvas{ display:none !important; }
+  .hotspot, .pin{ display:none !important; }
 </style>
 </head>
 <body class="entering">
@@ -914,7 +917,7 @@
   window.FV3D=FV;
 
   // ---- Pętla renderowania ----
-  (function loop(){ requestAnimationFrame(loop);
+  (function loop(){ return; /* animacja wyłączona */ requestAnimationFrame(loop);
     const dt=Math.min(clock.getDelta(),.05), t=clock.elapsedTime;
     // (nie zatrzymujemy na document.hidden — przeglądarka sama zwalnia karty w tle;
     //  dzięki temu animacja działa też w panelu podglądu)
