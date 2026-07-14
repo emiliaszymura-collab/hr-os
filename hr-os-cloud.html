@@ -103,6 +103,11 @@
   .kv{ display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid rgba(120,160,220,.1); } .kv span:first-child{ color:var(--przygas); }
   .matchBig{ display:flex; align-items:center; gap:14px; padding:14px; border-radius:13px; background:rgba(74,163,255,.08); border:1px solid rgba(74,163,255,.18); }
   .matchBig .v{ font-size:30px; font-weight:850; } .matchBig .l{ font-size:12px; color:var(--przygas); }
+  .aiRec{ font-size:13.5px; font-weight:750; }
+  .aiBlk{ margin-top:13px; } .aiLh{ font-size:11px; text-transform:uppercase; letter-spacing:.5px; font-weight:750; margin-bottom:6px; }
+  .aiLh.good{ color:var(--zielony); } .aiLh.warn{ color:var(--bursztyn); }
+  .aiItem{ font-size:12.5px; line-height:1.45; padding:4px 0; display:flex; gap:8px; align-items:flex-start; }
+  .aiItem .mk{ flex:0 0 auto; font-weight:800; } .aiItem.good .mk{ color:var(--zielony); } .aiItem.warn .mk{ color:var(--bursztyn); }
   .ai{ padding:13px; border-radius:11px; background:rgba(70,209,127,.08); border:1px solid rgba(70,209,127,.2); font-size:13px; line-height:1.5; } .ai b{ color:var(--zielony); }
   .rodo{ margin-top:12px; padding:11px 13px; border-radius:10px; background:rgba(155,107,255,.1); border:1px solid rgba(155,107,255,.25); font-size:11.5px; color:#c9b8ff; line-height:1.5; }
   .stageBtns{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; } .stageBtns button{ font-size:12px; font-weight:600; padding:9px; border-radius:9px; border:1px solid var(--line); background:var(--panel2); color:var(--tekst); }
@@ -384,6 +389,9 @@ const CFGKEY='hr-os-cloud-cfg';
 const ini=n=>(n||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const mkol=m=> m>=85?'#8fdcb4' : m>=70?'#f3caa0' : '#f2a1a8';
 const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// Pełna analiza AI (mocne strony, ryzyka) — trzymana jako JSON w polu ai
+function aiParse(v){ if(!v) return null; if(typeof v==='object') return v; try{ var o=JSON.parse(v); return (o&&typeof o==='object'&&('sum' in o||o.str||o.risk))?o:null; }catch(e){ return null; } }
+function aiSum(c){ var a=aiParse(c&&c.ai); return a?(a.sum||a.rec||''):((c&&c.ai)||''); }
 let sb=null, jobs=[], cands=[], selJob=null, webhook=localStorage.getItem('hr-os-cloud-webhook')||'https://emiliasz.app.n8n.cloud/webhook/auto-shortlist';
 let tTm; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tTm); tTm=setTimeout(()=>t.classList.remove('show'),2600); }
 const $=id=>document.getElementById(id);
@@ -604,7 +612,14 @@ async function openDrawer(id){ const c=cands.find(x=>x.id===id); if(!c) return; 
       <div class="kv"><span>E-mail</span><span>${esc(c.email||'—')}</span></div><div class="kv"><span>Zgoda RODO</span><span style="color:${c.consent?'var(--zielony)':'var(--czerwony)'}">${c.consent?'Tak':'Brak'}</span></div>
       <div class="kv"><span>Decyzja</span><span>${esc(c.decided_by||'—')}</span></div></div>
     <div class="sect"><h4>Treść CV</h4><div class="muted" style="font-size:12.5px;white-space:pre-wrap;line-height:1.5">${esc(c.cv||'—')}</div></div>
-    ${c.ai?`<div class="sect"><h4>Rekomendacja AI</h4><div class="ai"><b>AI:</b> ${esc(c.ai)}</div></div>`:''}
+    ${(()=>{ const a=aiParse(c.ai);
+      if(a){ return `<div class="sect"><h4>Analiza AI</h4>
+        ${a.rec?`<div class="aiRec" style="color:${mkol(m||0)}">Rekomendacja: ${esc(a.rec)}</div>`:''}
+        ${a.sum?`<div class="ai" style="margin-top:8px">${esc(a.sum)}</div>`:''}
+        ${(a.str&&a.str.length)?`<div class="aiBlk"><div class="aiLh good">Mocne strony</div>${a.str.map(s=>`<div class="aiItem good"><span class="mk">✓</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
+        ${(a.risk&&a.risk.length)?`<div class="aiBlk"><div class="aiLh warn">Do dopytania na rozmowie</div>${a.risk.map(s=>`<div class="aiItem warn"><span class="mk">?</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
+      </div>`; }
+      return c.ai?`<div class="sect"><h4>Rekomendacja AI</h4><div class="ai"><b>AI:</b> ${esc(c.ai)}</div></div>`:''; })()}
     <div class="sect"><h4>Etap (decyzję podejmuje człowiek)</h4><div class="stageBtns">${ETAPY.map(e=>`<button data-st="${e.id}" class="${e.id===c.stage?'cur':''}">${e.id}</button>`).join('')}</div></div>
     <div class="sect"><h4>Notatki</h4><textarea id="cNotes">${esc(c.notes||'')}</textarea></div>
     <div class="rodo">${IC.shield} Ocena AI to rekomendacja. Zgodnie z RODO (art. 22) i AI Act decyzję o kandydacie podejmuje człowiek.</div>
@@ -620,7 +635,8 @@ async function openDrawer(id){ const c=cands.find(x=>x.id===id); if(!c) return; 
 async function scoreAI(id){ const c=cands.find(x=>x.id===id); const job=jobs.find(j=>j.id===c.job_id);
   if(!webhook){ toast('Ustaw URL webhooka (⚙ AI)'); return; } toast('Oceniam CV przez AI...');
   try{ const res=await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({candidateName:c.name,jobTitle:job.title,jobDescription:(job.descr||'')+' Wymagania: '+(job.skills||[]).join(', '),cvText:c.cv||'',consent:c.consent})});
-    const d=await res.json(); const patch={}; if(d.dopasowanie!=null) patch.match_pct=d.dopasowanie; patch.ai=d.podsumowanie||d.rekomendacja||'Oceniono.';
+    const d=await res.json(); const patch={}; if(d.dopasowanie!=null) patch.match_pct=d.dopasowanie;
+    patch.ai=JSON.stringify({ sum:d.podsumowanie||'', str:d.mocneStrony||[], risk:d.ryzyka||[], flag:d.flagi||[], rec:d.rekomendacja||'' });
     Object.assign(c,patch); await sb.from('candidates').update(patch).eq('id',id); render(); openDrawer(id); toast('AI: '+(c.match_pct)+'%');
   }catch(e){ toast('Błąd połączenia z AI'); }
 }
@@ -694,7 +710,7 @@ async function scoreCandidate(row, job){
     clearTimeout(to);
     const d=await res.json(); const patch={};
     if(d.dopasowanie!=null) patch.match_pct=d.dopasowanie;
-    patch.ai=d.podsumowanie||d.rekomendacja||'';
+    patch.ai=JSON.stringify({ sum:d.podsumowanie||'', str:d.mocneStrony||[], risk:d.ryzyka||[], flag:d.flagi||[], rec:d.rekomendacja||'' });
     Object.assign(row,patch); await sb.from('candidates').update(patch).eq('id',row.id);
     return true;
   }catch(_){ return false; }
@@ -737,7 +753,7 @@ function openRanking(jobId){
     <td><b>${esc(c.name)}</b></td>
     <td style="text-align:center;font-weight:800;color:${mkol(m||0)}">${m!=null?m+'%':'—'}</td>
     <td>${esc(ocenaTekst(m))}</td>
-    <td style="font-size:12px;color:var(--przygas)">${esc((c.ai||'').slice(0,200))}</td>
+    <td style="font-size:12px;color:var(--przygas)">${esc((aiSum(c)||'').slice(0,200))}</td>
     <td style="text-align:center"><button class="btn ${zaproszony(c)?'ghost':'primary'} sm" data-invite="${c.id}" ${zaproszony(c)?'disabled':''}>${zaproszony(c)?IC.check+'Zaproszony':'Zaproś na rozmowę'}</button></td>
   </tr>`; }).join('');
   $('rankTableWrap').innerHTML=`<style>.ranktbl{width:100%;border-collapse:collapse}.ranktbl th,.ranktbl td{border-bottom:1px solid rgba(140,160,190,.14);padding:9px 10px;vertical-align:top}.ranktbl th{font-size:11.5px;color:var(--przygas);text-align:left;text-transform:uppercase;letter-spacing:.03em}</style>
@@ -748,7 +764,7 @@ function openRanking(jobId){
 $('rankPrint').onclick=()=>{
   const job=jobs.find(j=>j.id===rankJobId); if(!job) return;
   const list=cands.filter(c=>c.job_id===rankJobId).sort((a,b)=>(b.match_pct||0)-(a.match_pct||0));
-  const rows=list.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.name)}</td><td style="text-align:center;font-weight:bold">${c.match_pct!=null?c.match_pct+'%':'—'}</td><td>${esc(ocenaTekst(c.match_pct))}</td><td>${esc(c.ai||'')}</td></tr>`).join('');
+  const rows=list.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.name)}</td><td style="text-align:center;font-weight:bold">${c.match_pct!=null?c.match_pct+'%':'—'}</td><td>${esc(ocenaTekst(c.match_pct))}</td><td>${esc(aiSum(c)||'')}</td></tr>`).join('');
   const w=window.open('','_blank'); if(!w){ toast('Zezwól na wyskakujące okna, aby wydrukować'); return; }
   w.document.write(`<html><head><meta charset="utf-8"><title>Ranking — ${esc(job.title)}</title>
     <style>body{font-family:Arial,Helvetica,sans-serif;padding:28px;color:#111}h1{font-size:20px;margin:0 0 4px}.meta{color:#666;font-size:12px;margin-bottom:16px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:8px 10px;text-align:left;font-size:12.5px;vertical-align:top}th{background:#f2f4f7}</style></head>
@@ -768,8 +784,19 @@ function showDemo(){
     {id:'j5',title:'Barman',loc:'Katowice',sen:'Mid',skills:['Bar','Obsługa gościa'],descr:''}
   ];
   selJob='demo';
-  const seed=[['Katarzyna Lewandowska',95,'Screening'],['Magdalena Król',90,'Screening'],['Beata Dąbrowska',88,'Rozmowa'],['Marcin Zieliński',80,'Nowy'],['Rafał Mazur',78,'Nowy'],['Anna Wójcik',65,'Nowy'],['Piotr Kaczmarek',55,'Nowy'],['Krzysztof Jankowski',52,'Screening'],['Tomasz Nowak',40,'Nowy'],['Julia Wiśniewska',18,'Nowy']];
-  cands=seed.map((s,i)=>({id:'d'+i,job_id:'demo',name:s[0],role:'Menadżer restauracji',loc:'',match_pct:s[1],ai:'Ocena AI na podstawie CV i wymagań stanowiska (dopasowanie kompetencji).',stage:s[2],consent:true,decided_by:'—'}));
+  const seed=[
+    {n:'Katarzyna Lewandowska',m:95,st:'Screening',ai:{sum:'6 lat kierowania restauracją, food cost pod kontrolą, otwarcia lokali — bardzo silne dopasowanie do wymagań.',rec:'Do rozmowy',str:['6 lat jako kierownik (zespół 25 osób)','Food cost utrzymany na 28%','Otwarcia 2 lokali, wzrost sprzedaży 18% r/r'],risk:['Potwierdzić znajomość systemu POS używanego u nas','Sprawdzić dyspozycyjność w weekendy']}},
+    {n:'Magdalena Król',m:90,st:'Screening',ai:{sum:'7 lat kierownik gastronomii w hotelu 4* — mocne zarządzanie operacyjne i budżetowanie.',rec:'Do rozmowy',str:['Zespół 30 osób, bankiety do 300 osób','Budżetowanie, HACCP, współpraca z kuchnią'],risk:['Doświadczenie głównie hotelowe — zweryfikować dopasowanie do restauracji à la carte']}},
+    {n:'Beata Dąbrowska',m:88,st:'Rozmowa',ai:{sum:'Prowadziła własną restaurację 5 lat z pełną odpowiedzialnością P&L.',rec:'Do rozmowy',str:['Pełne P&L, food cost, marketing','Zespół 12 osób, zamówienia, sanepid'],risk:['Powód zamknięcia własnego lokalu — dopytać','Ewentualna przerwa w branży']}},
+    {n:'Marcin Zieliński',m:80,st:'Nowy',ai:{sum:'Kierownik zmiany w sieci restauracji — solidne podstawy operacyjne.',rec:'Do rozmowy',str:['Zarządzanie zespołem 15 osób','Grafiki, rozliczenia utargu, POS'],risk:['Food cost tylko podstawowo — zweryfikować','Brak doświadczenia w pełnym P&L']}},
+    {n:'Rafał Mazur',m:78,st:'Nowy',ai:{sum:'Restaurant manager w sieci fast-food — mocne procesy, inny segment.',rec:'Do rozmowy',str:['Zespół 20 osób, kontrola kosztów i strat','Rekrutacja i szkolenia'],risk:['Inny segment (fast-food) niż obsługa kelnerska','Sprawdzić znajomość standardów à la carte']}},
+    {n:'Anna Wójcik',m:65,st:'Nowy',ai:{sum:'Shift manager w bistro — dobra obsługa, mniej doświadczenia w kosztach.',rec:'Do weryfikacji',str:['Układanie grafików, wdrażanie kelnerów','Obsługa reklamacji, standardy sali'],risk:['Mniej doświadczenia w kontroli kosztów','Brak zarządzania zamówieniami']}},
+    {n:'Piotr Kaczmarek',m:55,st:'Nowy',ai:{sum:'Kierownik zmiany 2 lata + obsługa sali — brak doświadczenia budżetowego.',rec:'Do weryfikacji',str:['Bardzo dobra obsługa gości i praca sali','Znajomość systemu POS'],risk:['Tylko 2 lata jako kierownik zmiany','Brak doświadczenia w food cost i budżecie']}},
+    {n:'Krzysztof Jankowski',m:52,st:'Screening',ai:{sum:'8 lat zarządzania zespołem w retail — brak doświadczenia w gastronomii.',rec:'Do weryfikacji',str:['Zespół 18 osób, grafiki, targety','Inwentaryzacje, rekrutacja'],risk:['Brak doświadczenia w gastronomii','Zweryfikować znajomość HACCP i sanepidu']}},
+    {n:'Tomasz Nowak',m:40,st:'Nowy',ai:{sum:'5 lat obsługi w fine dining — brak doświadczenia menedżerskiego.',rec:'Słabe dopasowanie',str:['Bardzo dobra obsługa, znajomość win'],risk:['Brak doświadczenia w zarządzaniu zespołem','Brak doświadczenia w kosztach']}},
+    {n:'Julia Wiśniewska',m:18,st:'Nowy',ai:{sum:'Absolwentka po stażu — wysoka motywacja, brak doświadczenia menedżerskiego.',rec:'Słabe dopasowanie',str:['Wysoka motywacja','Podstawy HACCP ze szkoły'],risk:['Brak doświadczenia menedżerskiego','Tylko 6-miesięczny staż']}}
+  ];
+  cands=seed.map((s,i)=>({id:'d'+i,job_id:'demo',name:s.n,role:'Menadżer restauracji',loc:'',match_pct:s.m,ai:JSON.stringify(s.ai),stage:s.st,consent:true,decided_by:'—'}));
   showApp(); $('whoami').textContent='tryb demo'; render(); localStorage.setItem('hr-os-mode','demo');
 }
 // ---------- Start ----------
