@@ -858,8 +858,9 @@
     if(!A||!B||A.state!=='home'||B.state!=='home') return;
     wizyta=true;
     const cF=chip(m.from), cT=chip(m.to);
-    let vx=50-B.x, vy=52-B.y; const L=Math.hypot(vx,vy)||1;   // punkt spotkania od strony alejki
-    const cel=[B.x+vx/L*7, B.y+vy/L*7];
+    // Agent NIE idzie przez scenę (przecinałby meble). Robi krok do przodu na swoją
+    // czystą podłogę i odwraca się do kolegi — „łączność" widać po impulsach światła.
+    const cel=[A.x, Math.min(A.y+4, 80)];
     A.sitT=0; if(cF) cF.classList.add('speaking');            // wstaje...
     setTimeout(()=>{ idz(A,cel,()=>{                          // ...i idzie do kolegi
       A.lookYaw=(B.x-A.x)>=0? .5 : -.5; A.nextLook=1e9;
