@@ -1,7 +1,7 @@
 {
-  "name": "HR-OS — Hiring Loop System",
-  "short_name": "HR-OS",
-  "description": "System rekrutacyjny: agenci AI robią rutynę, człowiek podejmuje decyzje.",
+  "name": "Rekly — System rekrutacyjny AI",
+  "short_name": "Rekly",
+  "description": "Rekly: AI przesiewa CV i tworzy ranking, człowiek podejmuje decyzję.",
   "start_url": "./hr-os-cloud.html",
   "scope": "./",
   "display": "standalone",
