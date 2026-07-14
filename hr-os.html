@@ -300,12 +300,12 @@
     <div class="pin" id="pinDesk" style="left:63%; top:20%;"><div class="row"><span class="dot" style="background:#4aa3ff;color:#4aa3ff"></span><span class="t">Recruiting Desk</span></div><div class="s">Screening CV</div><div class="m" id="deskMatch">Dopasowanie: 87%</div></div>
 
     <!-- Plakietki agentów — pozycje skalibrowane pod puste biuro (anim1.webp) -->
-    <div class="hotspot" data-agent="recruiter"  style="left:63%; top:43%; --c:#4aa3ff;"><span class="ic"></span>Rekruter</div>
-    <div class="hotspot" data-agent="szkolenia"  style="left:40%; top:48%; --c:#9b6bff;"><span class="ic"></span>Szkolenia</div>
-    <div class="hotspot" data-agent="onboarding" style="left:26%; top:42%; --c:#46d17f;"><span class="ic"></span>Onboarding</div>
-    <div class="hotspot" data-agent="kultura"    style="left:52%; top:52%; --c:#ff5d6c;"><span class="ic"></span>Kultura</div>
-    <div class="hotspot" data-agent="compliance" style="left:42%; top:56%; --c:#4aa3ff;"><span class="ic"></span>Security Gate</div>
-    <div class="hotspot" data-agent="kadry"      style="left:66%; top:44%; --c:#ffb43e;"><span class="ic"></span>Kadry</div>
+    <div class="hotspot" data-agent="recruiter"  style="left:57%; top:61%; --c:#4aa3ff;"><span class="ic"></span>Rekruter</div>
+    <div class="hotspot" data-agent="szkolenia"  style="left:41%; top:60%; --c:#9b6bff;"><span class="ic"></span>Szkolenia</div>
+    <div class="hotspot" data-agent="onboarding" style="left:22%; top:53%; --c:#46d17f;"><span class="ic"></span>Onboarding</div>
+    <div class="hotspot" data-agent="kultura"    style="left:51%; top:62%; --c:#ff5d6c;"><span class="ic"></span>Kultura</div>
+    <div class="hotspot" data-agent="compliance" style="left:31%; top:57%; --c:#4aa3ff;"><span class="ic"></span>Security Gate</div>
+    <div class="hotspot" data-agent="kadry"      style="left:69%; top:53%; --c:#ffb43e;"><span class="ic"></span>Kadry</div>
   </div>
 
   <!-- KROK 3: panel agenta -->
@@ -572,7 +572,7 @@
   // ====== (wyłączone — zastąpione przez moduł PRAWDZIWEGO 3D na dole pliku) ======
   (function agenciZyja(){ return;
     const stage=document.getElementById('stage'); if(!stage) return;
-    const POS={ recruiter:[63,53], onboarding:[26,52], kadry:[66,54], szkolenia:[40,58], kultura:[52,62], compliance:[42,66] };
+    const POS={ recruiter:[57,71], onboarding:[22,63], kadry:[69,63], szkolenia:[41,70], kultura:[51,72], compliance:[31,67] };
     const COL={ recruiter:'#4aa3ff', onboarding:'#46d17f', kadry:'#ffb43e', szkolenia:'#9b6bff', kultura:'#ff5d6c', compliance:'#4aa3ff' };
     const ROZMOWA=[
       {from:'recruiter',  to:'compliance', text:'Nowe CV: 3 — sprawdź zgodność'},
@@ -689,7 +689,7 @@
   import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
   const stage=document.getElementById('stage');
-  const POS={ recruiter:[63,53], onboarding:[26,52], kadry:[66,54], szkolenia:[40,58], kultura:[52,62], compliance:[42,66] };
+  const POS={ recruiter:[57,71], onboarding:[22,63], kadry:[69,63], szkolenia:[41,70], kultura:[51,72], compliance:[31,67] };
   const COLN={ recruiter:0x4aa3ff, onboarding:0x46d17f, kadry:0xffb43e, szkolenia:0x9b6bff, kultura:0xff5d6c, compliance:0x4aa3ff };
   const COLS={ recruiter:'#4aa3ff', onboarding:'#46d17f', kadry:'#ffb43e', szkolenia:'#9b6bff', kultura:'#ff5d6c', compliance:'#4aa3ff' };
   const ROZMOWA=[
@@ -790,12 +790,12 @@
   // (skalibrowane z siatki 2% na renderze — agent siada na krześle, nie w powietrzu)
   // Wszyscy STOJĄ na podłodze przy swoim stanowisku (stopy na podłodze — bez lewitacji)
   const AGENT_DEF=[
-    {id:'recruiter',  col:0x4aa3ff, seat:[63,53], yaw:-0.5, sits:0},   // wolna podłoga przed biurkiem (prawa)
-    {id:'szkolenia',  col:0x9b6bff, seat:[40,58], yaw: 0.3, sits:0},   // wolna podłoga przed tablicą (lewa-środek)
-    {id:'onboarding', col:0x46d17f, seat:[26,52], yaw:-0.4, sits:0},   // wolna podłoga przy lewym biurku
-    {id:'kultura',    col:0xff5d6c, seat:[52,62], yaw: 0.4, sits:0},   // wolna podłoga PRZED kanapą (środek-przód)
-    {id:'compliance', col:0x4aa3ff, seat:[42,66], yaw: 0.4, sits:0},   // otwarta podłoga platformy przed bramkami (wolna od mebli, wewnątrz krawędzi)
-    {id:'kadry',      col:0xffb43e, seat:[66,54], yaw:-0.3, sits:0},   // wolna podłoga obok sejfu (prawa)
+    {id:'onboarding', col:0x46d17f, seat:[22,63], yaw:-0.4, sits:0},   // przedni pas — przed lewym biurkiem
+    {id:'compliance', col:0x4aa3ff, seat:[31,67], yaw: 0.4, sits:0},   // przedni pas — przed bramkami
+    {id:'szkolenia',  col:0x9b6bff, seat:[41,70], yaw: 0.3, sits:0},   // przedni pas — lewy-środek
+    {id:'kultura',    col:0xff5d6c, seat:[51,72], yaw: 0.4, sits:0},   // przedni pas — przed terrarium
+    {id:'recruiter',  col:0x4aa3ff, seat:[57,71], yaw:-0.5, sits:0},   // przedni pas — przed sejfem/kanapą (prawa-środek)
+    {id:'kadry',      col:0xffb43e, seat:[69,63], yaw:-0.3, sits:0},   // przedni pas — na prawo od sejfu
   ];
   const A3D={};
   AGENT_DEF.forEach(def=>{ const g=mkRobot3D(def.col); world.add(g);
