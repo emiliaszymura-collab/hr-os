@@ -2,7 +2,7 @@
   "name": "HR-OS — Hiring Loop System",
   "short_name": "HR-OS",
   "description": "System rekrutacyjny: agenci AI robią rutynę, człowiek podejmuje decyzje.",
-  "start_url": "./hr-os.html",
+  "start_url": "./hr-os-cloud.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",

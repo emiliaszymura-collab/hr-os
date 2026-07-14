@@ -108,6 +108,9 @@
   .aiLh.good{ color:var(--zielony); } .aiLh.warn{ color:var(--bursztyn); }
   .aiItem{ font-size:12.5px; line-height:1.45; padding:4px 0; display:flex; gap:8px; align-items:flex-start; }
   .aiItem .mk{ flex:0 0 auto; font-weight:800; } .aiItem.good .mk{ color:var(--zielony); } .aiItem.warn .mk{ color:var(--bursztyn); }
+  .aiLh.q{ color:var(--niebieski); } .aiItem.q .mk{ color:var(--niebieski); }
+  .aiLh.flag{ color:var(--czerwony); } .aiItem.flag .mk{ color:var(--czerwony); }
+  .flagBlk{ padding:10px 12px; border-radius:12px; background:rgba(242,161,168,.10); border:1px solid rgba(242,161,168,.28); }
   .ai{ padding:13px; border-radius:11px; background:rgba(70,209,127,.08); border:1px solid rgba(70,209,127,.2); font-size:13px; line-height:1.5; } .ai b{ color:var(--zielony); }
   .rodo{ margin-top:12px; padding:11px 13px; border-radius:10px; background:rgba(155,107,255,.1); border:1px solid rgba(155,107,255,.25); font-size:11.5px; color:#c9b8ff; line-height:1.5; }
   .stageBtns{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; } .stageBtns button{ font-size:12px; font-weight:600; padding:9px; border-radius:9px; border:1px solid var(--line); background:var(--panel2); color:var(--tekst); }
@@ -289,7 +292,6 @@
       <aside id="side">
         <div class="brand"><span class="logo">HR-OS</span><span class="badge"><span class="live"></span> Chmura</span></div>
         <button class="btn primary sideNew" id="btnNewJob"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nowe stanowisko</button>
-        <a href="hr-os.html" class="jobCard navlink" style="text-decoration:none"><span class="mi"><svg class="i" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></span><span class="jt">Scena 3D</span></a>
         <div class="h"><span class="t">Stanowiska</span></div>
         <div id="jobs"></div>
         <div class="sideFoot">
@@ -613,11 +615,14 @@ async function openDrawer(id){ const c=cands.find(x=>x.id===id); if(!c) return; 
       <div class="kv"><span>Decyzja</span><span>${esc(c.decided_by||'—')}</span></div></div>
     <div class="sect"><h4>Treść CV</h4><div class="muted" style="font-size:12.5px;white-space:pre-wrap;line-height:1.5">${esc(c.cv||'—')}</div></div>
     ${(()=>{ const a=aiParse(c.ai);
-      if(a){ return `<div class="sect"><h4>Analiza AI</h4>
+      if(a){ const qs=(a.q&&a.q.length)?a.q:(a.risk||[]).map(r=>'Dopytaj: '+r);
+      return `<div class="sect"><h4>Analiza AI</h4>
         ${a.rec?`<div class="aiRec" style="color:${mkol(m||0)}">Rekomendacja: ${esc(a.rec)}</div>`:''}
         ${a.sum?`<div class="ai" style="margin-top:8px">${esc(a.sum)}</div>`:''}
+        ${(a.flag&&a.flag.length)?`<div class="aiBlk flagBlk"><div class="aiLh flag">Czerwone flagi</div>${a.flag.map(s=>`<div class="aiItem flag"><span class="mk">⚑</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
         ${(a.str&&a.str.length)?`<div class="aiBlk"><div class="aiLh good">Mocne strony</div>${a.str.map(s=>`<div class="aiItem good"><span class="mk">✓</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
-        ${(a.risk&&a.risk.length)?`<div class="aiBlk"><div class="aiLh warn">Do dopytania na rozmowie</div>${a.risk.map(s=>`<div class="aiItem warn"><span class="mk">?</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
+        ${(a.risk&&a.risk.length)?`<div class="aiBlk"><div class="aiLh warn">Ryzyka</div>${a.risk.map(s=>`<div class="aiItem warn"><span class="mk">!</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
+        ${qs.length?`<div class="aiBlk"><div class="aiLh q">Pytania na rozmowę</div>${qs.map(s=>`<div class="aiItem q"><span class="mk">?</span><span>${esc(s)}</span></div>`).join('')}</div>`:''}
       </div>`; }
       return c.ai?`<div class="sect"><h4>Rekomendacja AI</h4><div class="ai"><b>AI:</b> ${esc(c.ai)}</div></div>`:''; })()}
     <div class="sect"><h4>Etap (decyzję podejmuje człowiek)</h4><div class="stageBtns">${ETAPY.map(e=>`<button data-st="${e.id}" class="${e.id===c.stage?'cur':''}">${e.id}</button>`).join('')}</div></div>
@@ -636,7 +641,7 @@ async function scoreAI(id){ const c=cands.find(x=>x.id===id); const job=jobs.fin
   if(!webhook){ toast('Ustaw URL webhooka (⚙ AI)'); return; } toast('Oceniam CV przez AI...');
   try{ const res=await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({candidateName:c.name,jobTitle:job.title,jobDescription:(job.descr||'')+' Wymagania: '+(job.skills||[]).join(', '),cvText:c.cv||'',consent:c.consent})});
     const d=await res.json(); const patch={}; if(d.dopasowanie!=null) patch.match_pct=d.dopasowanie;
-    patch.ai=JSON.stringify({ sum:d.podsumowanie||'', str:d.mocneStrony||[], risk:d.ryzyka||[], flag:d.flagi||[], rec:d.rekomendacja||'' });
+    patch.ai=JSON.stringify({ sum:d.podsumowanie||'', str:d.mocneStrony||[], risk:d.ryzyka||[], flag:d.flagi||[], q:d.pytania||[], rec:d.rekomendacja||'' });
     Object.assign(c,patch); await sb.from('candidates').update(patch).eq('id',id); render(); openDrawer(id); toast('AI: '+(c.match_pct)+'%');
   }catch(e){ toast('Błąd połączenia z AI'); }
 }
@@ -710,7 +715,7 @@ async function scoreCandidate(row, job){
     clearTimeout(to);
     const d=await res.json(); const patch={};
     if(d.dopasowanie!=null) patch.match_pct=d.dopasowanie;
-    patch.ai=JSON.stringify({ sum:d.podsumowanie||'', str:d.mocneStrony||[], risk:d.ryzyka||[], flag:d.flagi||[], rec:d.rekomendacja||'' });
+    patch.ai=JSON.stringify({ sum:d.podsumowanie||'', str:d.mocneStrony||[], risk:d.ryzyka||[], flag:d.flagi||[], q:d.pytania||[], rec:d.rekomendacja||'' });
     Object.assign(row,patch); await sb.from('candidates').update(patch).eq('id',row.id);
     return true;
   }catch(_){ return false; }
@@ -797,6 +802,26 @@ function showDemo(){
     {n:'Julia Wiśniewska',m:18,st:'Nowy',ai:{sum:'Absolwentka po stażu — wysoka motywacja, brak doświadczenia menedżerskiego.',rec:'Słabe dopasowanie',str:['Wysoka motywacja','Podstawy HACCP ze szkoły'],risk:['Brak doświadczenia menedżerskiego','Tylko 6-miesięczny staż']}}
   ];
   cands=seed.map((s,i)=>({id:'d'+i,job_id:'demo',name:s.n,role:'Menadżer restauracji',loc:'',match_pct:s.m,ai:JSON.stringify(s.ai),stage:s.st,consent:true,decided_by:'—'}));
+  const demoQ={
+    'Katarzyna Lewandowska':['Jakimi konkretnie działaniami utrzymywałaś food cost na 28%?','Opisz otwarcie lokalu od zera — co było najtrudniejsze?','Jak zarządzałaś zespołem 25 osób w szczycie sezonu?'],
+    'Magdalena Król':['Czym różni się dla Ciebie zarządzanie restauracją à la carte od bankietów?','Jak budujesz i pilnujesz budżetu miesięcznego?','Podaj przykład kryzysu operacyjnego, który rozwiązałaś.'],
+    'Beata Dąbrowska':['Dlaczego zamknęłaś własny lokal i czego Cię to nauczyło?','Jak pilnowałaś P&L i food cost we własnej restauracji?'],
+    'Marcin Zieliński':['Jak liczysz i kontrolujesz food cost?','Opisz sytuację, gdy przejąłeś zmianę w kryzysie.','Jak motywujesz zespół przy dużej rotacji?'],
+    'Rafał Mazur':['Jak przeniesiesz standardy fast-food na restaurację z obsługą kelnerską?','Jak kontrolowałeś straty i koszty?'],
+    'Anna Wójcik':['Jak zarządzałabyś zamówieniami i kosztami — czego jeszcze się uczysz?','Opisz trudną reklamację, którą rozwiązałaś.'],
+    'Piotr Kaczmarek':['Czego brakuje Ci do roli kierownika i jak chcesz to nadrobić?','Jak rozumiesz food cost?'],
+    'Krzysztof Jankowski':['Jak przełożysz zarządzanie w retail na gastronomię?','Co wiesz o HACCP i wymaganiach sanepidu?'],
+    'Tomasz Nowak':['Dlaczego chcesz przejść z obsługi na zarządzanie?','Jak wyobrażasz sobie zarządzanie zespołem i grafikami?'],
+    'Julia Wiśniewska':['Co motywuje Cię do roli menedżerskiej mimo braku doświadczenia?','Jak widzisz swoją ścieżkę rozwoju na to stanowisko?']
+  };
+  const demoF={
+    'Beata Dąbrowska':['Przerwa w branży — powód do wyjaśnienia'],
+    'Piotr Kaczmarek':['Brak doświadczenia w food cost i budżecie'],
+    'Krzysztof Jankowski':['Zero doświadczenia w gastronomii'],
+    'Tomasz Nowak':['Brak doświadczenia menedżerskiego'],
+    'Julia Wiśniewska':['Brak doświadczenia menedżerskiego — tylko 6-mies. staż']
+  };
+  cands.forEach(c=>{ try{ const a=JSON.parse(c.ai); if(demoQ[c.name]) a.q=demoQ[c.name]; if(demoF[c.name]) a.flag=demoF[c.name]; c.ai=JSON.stringify(a); }catch(e){} });
   showApp(); $('whoami').textContent='tryb demo'; render(); localStorage.setItem('hr-os-mode','demo');
 }
 // ---------- Start ----------
